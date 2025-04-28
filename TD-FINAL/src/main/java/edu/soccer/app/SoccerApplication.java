@@ -1,10 +1,10 @@
-package edu.restaurant.app;
+package edu.soccer.app;
 
 import java.util.logging.Logger;
 
-public class RestaurantApplication {
+public class SoccerApplication {
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger("RestaurantApplication");
+        Logger logger = Logger.getLogger("SoccerApplication");
         logger.info("Starting application");
     }
 }
