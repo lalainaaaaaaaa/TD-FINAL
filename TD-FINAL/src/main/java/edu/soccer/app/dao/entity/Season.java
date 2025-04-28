@@ -22,8 +22,8 @@ public class Season {
         return standings;
     }
 
-    public int getYear() {
-        return year;
+    public String getYear() {
+        return String.valueOf(year);
     }
 
     public List<Match> getMatches() {

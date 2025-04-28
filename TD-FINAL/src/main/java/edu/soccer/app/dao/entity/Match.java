@@ -9,7 +9,7 @@ public class Match {
     private String stadium;
     private Season season;
 
-    public Match(Team homeTeam, Team awayTeam, LocalDateTime dateTime, String stadium, Season season) {
+    public Match() {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.dateTime = dateTime;

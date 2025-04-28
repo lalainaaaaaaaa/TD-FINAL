@@ -10,6 +10,7 @@ public class Team {
     private String stadium;
     private List<Player> players;
     private Coach coach;
+    private CollectiveStatistics collectiveStatistics;
 
     public Team(String name, String acronym, int yearFounded, String stadium) {
         this.name = name;
@@ -17,6 +18,7 @@ public class Team {
         this.yearFounded = yearFounded;
         this.stadium = stadium;
         this.players = new ArrayList<>();
+        this.collectiveStatistics = new CollectiveStatistics();
     }
 
     public void addPlayer(Player player) {
@@ -27,6 +29,11 @@ public class Team {
         this.coach = coach;
     }
 
+    public CollectiveStatistics getCollectiveStatistics() { // Add this method
+        return collectiveStatistics;
+    }
+
+    // Getters and setters
     public String getName() {
         return name;
     }
