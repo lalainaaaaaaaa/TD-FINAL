@@ -12,7 +12,6 @@ public class IndividualStatistics {
         playingTime += minutes;
     }
 
-    // Getters and setters
     public int getGoalsScored() {
         return goalsScored;
     }

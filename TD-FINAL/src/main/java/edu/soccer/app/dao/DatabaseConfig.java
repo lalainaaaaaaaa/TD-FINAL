@@ -14,12 +14,12 @@ public class DatabaseConfig {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
 
-        // Récupérer les informations de connexion à partir des variables d'environnement
+
         String dbUrl = System.getenv("DB_URL");
         String dbUsername = System.getenv("DB_USERNAME");
         String dbPassword = System.getenv("DB_PASSWORD");
 
-        // Vérification si les valeurs d'environnement sont définies
+
         if (dbUrl == null || dbUsername == null || dbPassword == null) {
             throw new IllegalArgumentException("Les variables d'environnement pour la base de données ne sont pas définies.");
         }

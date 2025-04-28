@@ -8,10 +8,9 @@ public class CollectiveStatistics {
     private int cleanSheets;
 
     public void update() {
-        // Logic to update statistics
+        // Logic
     }
 
-    // Getters and setters
     public int getPoints() {
         return points;
     }

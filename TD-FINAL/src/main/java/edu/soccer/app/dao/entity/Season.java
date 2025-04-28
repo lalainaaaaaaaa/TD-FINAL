@@ -15,14 +15,13 @@ public class Season {
     }
 
     public void generateMatches() {
-        // Logic to generate matches for the season
+        // Logic
     }
 
     public List<Team> getStandings() {
         return standings;
     }
 
-    // Getters and setters
     public int getYear() {
         return year;
     }

@@ -18,15 +18,14 @@ public class Match {
     }
 
     public void play() {
-        // Logic to play the match
+        // Logic
     }
 
     public String getResult() {
-        // Logic to return the match result
+        // Logic
         return null;
     }
 
-    // Getters and setters
     public Team getHomeTeam() {
         return homeTeam;
     }

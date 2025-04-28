@@ -27,7 +27,6 @@ public class Championship {
         // Logic to end the season
     }
 
-    // Getters and setters
     public String getName() {
         return name;
     }

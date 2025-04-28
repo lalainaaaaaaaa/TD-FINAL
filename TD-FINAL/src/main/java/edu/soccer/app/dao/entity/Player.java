@@ -26,7 +26,6 @@ public class Player {
         individualStatistics.updatePlayingTime(minutes);
     }
 
-    // Getters and setters
     public String getName() {
         return name;
     }

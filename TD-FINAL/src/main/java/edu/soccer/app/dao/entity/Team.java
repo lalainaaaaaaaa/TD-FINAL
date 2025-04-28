@@ -27,7 +27,6 @@ public class Team {
         this.coach = coach;
     }
 
-    // Getters and setters
     public String getName() {
         return name;
     }
