@@ -1,0 +1,54 @@
+package edu.soccer.app.dao.entity;
+
+
+public class Player {
+    private String name;
+    private int number;
+    private String position;
+    private String nationality;
+    private int age;
+    private IndividualStatistics individualStatistics;
+
+    public Player(String name, int number, String position, String nationality, int age) {
+        this.name = name;
+        this.number = number;
+        this.position = position;
+        this.nationality = nationality;
+        this.age = age;
+        this.individualStatistics = new IndividualStatistics();
+    }
+
+    public void scoreGoal() {
+        individualStatistics.updateGoals();
+    }
+
+    public void playMatch(int minutes) {
+        individualStatistics.updatePlayingTime(minutes);
+    }
+
+    // Getters and setters
+    public String getName() {
+        return name;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public IndividualStatistics getIndividualStatistics() {
+        return individualStatistics;
+    }
+
+}
