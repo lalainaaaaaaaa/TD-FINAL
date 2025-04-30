@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class APIManagement {
-    private List<Match> matchStatistics;
+    private final List<Match> matchStatistics;
 
     public APIManagement() {
         this.matchStatistics = new ArrayList<>();

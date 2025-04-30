@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Championship {
-    private String name;
-    private String country;
-    private List<Team> teams;
+    private final String name;
+    private final String country;
+    private final List<Team> teams;
     private Season currentSeason;
 
     public Championship(String name, String country) {

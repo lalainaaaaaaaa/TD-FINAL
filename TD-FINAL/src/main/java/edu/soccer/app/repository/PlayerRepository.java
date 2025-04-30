@@ -14,7 +14,7 @@ public class PlayerRepository {
 
     public List<Player> findAll() throws SQLException {
         List<Player> players = new ArrayList<>();
-        String sql = "SELECT * FROM players";
+        String sql = "SELECT * FROM Player";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Player player = new Player(rs.getString("name"), rs.getInt("number"),
@@ -27,7 +27,7 @@ public class PlayerRepository {
     }
 
     public void save(Player player) throws SQLException {
-        String sql = "INSERT INTO players (name, number, position, nationality, age) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Player (name, number, position, nationality, age) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, player.getName());
             pstmt.setInt(2, player.getNumber());
@@ -39,7 +39,7 @@ public class PlayerRepository {
     }
 
     public void update(Player player) throws SQLException {
-        String sql = "UPDATE players SET position = ?, nationality = ?, age = ? WHERE number = ?";
+        String sql = "UPDATE Player SET position = ?, nationality = ?, age = ? WHERE number = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, player.getPosition());
             pstmt.setString(2, player.getNationality());
@@ -50,7 +50,7 @@ public class PlayerRepository {
     }
 
     public void delete(int number) throws SQLException {
-        String sql = "DELETE FROM players WHERE number = ?";
+        String sql = "DELETE FROM Player WHERE number = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, number);
             pstmt.executeUpdate();

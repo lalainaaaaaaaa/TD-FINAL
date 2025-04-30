@@ -1,5 +1,6 @@
-CREATE TABLE Coach (
-                       id SERIAL PRIMARY KEY,
-                       name VARCHAR(100) NOT NULL,
-                       nationality VARCHAR(50)
+CREATE TABLE Season (
+                        year INT NOT NULL,
+                        championshipId INT NOT NULL,
+                        FOREIGN KEY (championshipId) REFERENCES Championships(id),
+                        PRIMARY KEY (year, championshipId)
 );

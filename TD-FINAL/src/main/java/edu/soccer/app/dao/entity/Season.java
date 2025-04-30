@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Season {
-    private int year;
-    private List<Match> matches;
-    private List<Team> standings;
+    private final int year;
+    private final List<Match> matches;
+    private final List<Team> standings;
 
     public Season(int year) {
         this.year = year;
@@ -22,7 +22,7 @@ public class Season {
         return standings;
     }
 
-    public String getYear() {
+    public int getYear() {
         return String.valueOf(year);
     }
 

@@ -7,7 +7,7 @@ import edu.soccer.app.dao.entity.Match;
 import java.util.List;
 
 public class FIFAManagement {
-    private APIManagement apiManagement;
+    private final APIManagement apiManagement;
 
     public FIFAManagement(APIManagement apiManagement) {
         this.apiManagement = apiManagement;

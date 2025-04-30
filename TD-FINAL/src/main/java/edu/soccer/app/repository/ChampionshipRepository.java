@@ -14,7 +14,7 @@ public class ChampionshipRepository {
 
     public List<Championship> findAll() throws SQLException {
         List<Championship> championships = new ArrayList<>();
-        String sql = "SELECT * FROM championships";
+        String sql = "SELECT * FROM Championship";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Championship championship = new Championship(rs.getString("name"), rs.getString("country"));
@@ -25,7 +25,7 @@ public class ChampionshipRepository {
     }
 
     public void save(Championship championship) throws SQLException {
-        String sql = "INSERT INTO championships (name, country) VALUES (?, ?)";
+        String sql = "INSERT INTO Championship (name, country) VALUES (?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, championship.getName());
             pstmt.setString(2, championship.getCountry());
@@ -34,7 +34,7 @@ public class ChampionshipRepository {
     }
 
     public void update(Championship championship) throws SQLException {
-        String sql = "UPDATE championships SET country = ? WHERE name = ?";
+        String sql = "UPDATE Championship SET country = ? WHERE name = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, championship.getCountry());
             pstmt.setString(2, championship.getName());
@@ -43,7 +43,7 @@ public class ChampionshipRepository {
     }
 
     public void delete(String name) throws SQLException {
-        String sql = "DELETE FROM championships WHERE name = ?";
+        String sql = "DELETE FROM Championship WHERE name = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, name);
             pstmt.executeUpdate();

@@ -2,12 +2,12 @@ package edu.soccer.app.dao.entity;
 
 
 public class Player {
-    private String name;
-    private int number;
-    private String position;
-    private String nationality;
-    private int age;
-    private IndividualStatistics individualStatistics;
+    private final String name;
+    private final int number;
+    private final String position;
+    private final String nationality;
+    private final int age;
+    private final IndividualStatistics individualStatistics;
 
     public Player(String name, int number, String position, String nationality, int age) {
         this.name = name;

@@ -14,7 +14,7 @@ public class TeamRepository {
 
     public List<Team> findAll() throws SQLException {
         List<Team> teams = new ArrayList<>();
-        String sql = "SELECT * FROM teams";
+        String sql = "SELECT * FROM Team";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Team team = new Team(rs.getString("name"), rs.getString("acronym"),
@@ -26,7 +26,7 @@ public class TeamRepository {
     }
 
     public void save(Team team) throws SQLException {
-        String sql = "INSERT INTO teams (name, acronym, yearFounded, stadium) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Team (name, acronym, yearFounded, stadium) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, team.getName());
             pstmt.setString(2, team.getAcronym());
@@ -37,7 +37,7 @@ public class TeamRepository {
     }
 
     public void update(Team team) throws SQLException {
-        String sql = "UPDATE teams SET acronym = ?, yearFounded = ?, stadium = ? WHERE name = ?";
+        String sql = "UPDATE Team SET acronym = ?, yearFounded = ?, stadium = ? WHERE name = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, team.getAcronym());
             pstmt.setInt(2, team.getYearFounded());

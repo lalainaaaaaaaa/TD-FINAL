@@ -25,7 +25,7 @@ public class MatchRepository {
     }
 
     public void save(Match match) throws SQLException {
-        String sql = "INSERT INTO matches (homeTeam, awayTeam, dateTime, stadium, season) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Match (homeTeam, awayTeam, dateTime, stadium, season) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, match.getHomeTeam().getName());
             pstmt.setString(2, match.getAwayTeam().getName());
@@ -37,7 +37,7 @@ public class MatchRepository {
     }
 
     public void update(Match match) throws SQLException {
-        String sql = "UPDATE matches SET dateTime = ?, stadium = ? WHERE homeTeam = ? AND awayTeam = ?";
+        String sql = "UPDATE Match SET dateTime = ?, stadium = ? WHERE homeTeam = ? AND awayTeam = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setTimestamp(1, Timestamp.valueOf(match.getDateTime()));
             pstmt.setString(2, match.getStadium());
@@ -48,7 +48,7 @@ public class MatchRepository {
     }
 
     public void delete(String homeTeam, String awayTeam) throws SQLException {
-        String sql = "DELETE FROM matches WHERE homeTeam = ? AND awayTeam = ?";
+        String sql = "DELETE FROM Match WHERE homeTeam = ? AND awayTeam = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, homeTeam);
             pstmt.setString(2, awayTeam);

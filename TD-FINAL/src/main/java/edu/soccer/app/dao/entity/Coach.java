@@ -1,8 +1,8 @@
 package edu.soccer.app.dao.entity;
 
 public class Coach {
-    private String name;
-    private String nationality;
+    private final String name;
+    private final String nationality;
 
     public Coach(String name, String nationality) {
         this.name = name;

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-    private String name;
+    private final String name;
     private String acronym;
-    private int yearFounded;
-    private String stadium;
-    private List<Player> players;
+    private final int yearFounded;
+    private final String stadium;
+    private final List<Player> players;
     private Coach coach;
-    private CollectiveStatistics collectiveStatistics;
+    private final CollectiveStatistics collectiveStatistics;
 
     public Team(String name, String acronym, int yearFounded, String stadium) {
         this.name = name;
@@ -21,25 +21,19 @@ public class Team {
         this.collectiveStatistics = new CollectiveStatistics();
     }
 
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
-
-    public void setCoach(Coach coach) {
-        this.coach = coach;
-    }
-
-    public CollectiveStatistics getCollectiveStatistics() { // Add this method
-        return collectiveStatistics;
-    }
-
-    // Getters and setters
-    public String getName() {
-        return name;
+    // Méthodes set pour les attributs modifiables
+    public void setAcronym(String acronym) {
+        this.acronym = acronym;
     }
 
     public String getAcronym() {
         return acronym;
+    }
+
+    // Autres getters...
+
+    public String getName() {
+        return name;
     }
 
     public int getYearFounded() {
@@ -56,5 +50,13 @@ public class Team {
 
     public Coach getCoach() {
         return coach;
+    }
+
+    public void setCoach(Coach coach) {
+        this.coach = coach;
+    }
+
+    public CollectiveStatistics getCollectiveStatistics() {
+        return collectiveStatistics;
     }
 }
