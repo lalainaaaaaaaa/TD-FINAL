@@ -2,52 +2,45 @@ package edu.soccer.app.dao.entity;
 
 public class CollectiveStatistics {
     private int points;
-    private int goalsScored;
-    private int goalsConceded;
-    private int goalDifference;
+    private int goalsFor;
+    private int goalsAgainst;
     private int cleanSheets;
 
-    public void update() {
-        // Logic
+    public CollectiveStatistics() {
+        this.points = 0;
+        this.goalsFor = 0;
+        this.goalsAgainst = 0;
+        this.cleanSheets = 0;
+    }
+
+    public void update(int goalsFor, int goalsAgainst) {
+        this.goalsFor += goalsFor;
+        this.goalsAgainst += goalsAgainst;
+
+        if (goalsFor > goalsAgainst) {
+            this.points += 3;
+        } else if (goalsFor == goalsAgainst) {
+            this.points += 1;
+        }
+
+        if (goalsAgainst == 0) {
+            this.cleanSheets++;
+        }
     }
 
     public int getPoints() {
         return points;
     }
-
-    public void setPoints(int points) {
-        this.points = points;
+    public int getGoalsFor() {
+        return goalsFor;
     }
-
-    public int getGoalsScored() {
-        return goalsScored;
+    public int getGoalsAgainst() {
+        return goalsAgainst;
     }
-
-    public void setGoalsScored(int goalsScored) {
-        this.goalsScored = goalsScored;
-    }
-
-    public int getGoalsConceded() {
-        return goalsConceded;
-    }
-
-    public void setGoalsConceded(int goalsConceded) {
-        this.goalsConceded = goalsConceded;
-    }
-
-    public int getGoalDifference() {
-        return goalDifference;
-    }
-
-    public void setGoalDifference(int goalDifference) {
-        this.goalDifference = goalDifference;
-    }
-
     public int getCleanSheets() {
         return cleanSheets;
     }
-
-    public void setCleanSheets(int cleanSheets) {
-        this.cleanSheets = cleanSheets;
+    public int getGoalDifference() {
+        return goalsFor - goalsAgainst;
     }
 }

@@ -17,8 +17,12 @@ public class TeamRepository {
         String sql = "SELECT * FROM Team";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Team team = new Team(rs.getString("name"), rs.getString("acronym"),
-                        rs.getInt("yearFounded"), rs.getString("stadium"));
+                Team team = new Team(
+                        rs.getString("name"),
+                        rs.getString("acronym"),
+                        rs.getInt("yearFounded"),
+                        rs.getString("stadium")
+                );
                 teams.add(team);
             }
         }
@@ -48,7 +52,7 @@ public class TeamRepository {
     }
 
     public void delete(String name) throws SQLException {
-        String sql = "DELETE FROM teams WHERE name = ?";
+        String sql = "DELETE FROM Team WHERE name = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, name);
             pstmt.executeUpdate();

@@ -28,4 +28,20 @@ public class SeasonService {
             throw new RuntimeException("Error saving season", e);
         }
     }
+
+    public void update(Season season) {
+        try {
+            seasonRepository.update(season);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating season", e);
+        }
+    }
+
+    public void delete(int year) {
+        try {
+            seasonRepository.delete(year);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting season", e);
+        }
+    }
 }

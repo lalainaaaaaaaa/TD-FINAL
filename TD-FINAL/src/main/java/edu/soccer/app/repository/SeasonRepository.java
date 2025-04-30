@@ -15,9 +15,11 @@ public class SeasonRepository {
     public List<Season> findAll() throws SQLException {
         List<Season> seasons = new ArrayList<>();
         String sql = "SELECT * FROM Season";
+
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Season season = new Season(rs.getInt("year"));
+                int year = rs.getInt("year");
+                Season season = new Season(year);
                 seasons.add(season);
             }
         }
@@ -27,7 +29,7 @@ public class SeasonRepository {
     public void save(Season season) throws SQLException {
         String sql = "INSERT INTO Season (year) VALUES (?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, Integer.parseInt(season.getYear()));
+            pstmt.setInt(1, season.getYear());
             pstmt.executeUpdate();
         }
     }
@@ -35,8 +37,8 @@ public class SeasonRepository {
     public void update(Season season) throws SQLException {
         String sql = "UPDATE Season SET year = ? WHERE year = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, Integer.parseInt(season.getYear()));
-            pstmt.setInt(2, Integer.parseInt(season.getYear()));
+            pstmt.setInt(1, season.getYear());
+            pstmt.setInt(2, season.getYear());
             pstmt.executeUpdate();
         }
     }

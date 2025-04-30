@@ -1,22 +1,35 @@
 package edu.soccer.app.dao.entity;
 
 public class IndividualStatistics {
-    private int goalsScored;
+    private int goals;
     private int playingTime;
 
-    public void updateGoals() {
-        goalsScored++;
+    public IndividualStatistics() {
+        this.goals = 0;
+        this.playingTime = 0;
     }
 
-    public void updatePlayingTime(int minutes) {
-        playingTime += minutes;
+    public int getGoals() {
+        return goals;
     }
 
-    public int getGoalsScored() {
-        return goalsScored;
+    public void setGoals(int goals) {
+        this.goals = goals;
+    }
+
+    public void updateGoals(int goals) {
+        this.goals += goals;
     }
 
     public int getPlayingTime() {
         return playingTime;
+    }
+
+    public void setPlayingTime(int playingTime) {
+        this.playingTime = playingTime;
+    }
+
+    public void updatePlayingTime(int minutes) {
+        this.playingTime += minutes;
     }
 }

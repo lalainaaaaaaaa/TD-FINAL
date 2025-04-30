@@ -1,62 +1,92 @@
 package edu.soccer.app.dao.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Team {
-    private final String name;
+    private String name;
+    private String stadium;
     private String acronym;
-    private final int yearFounded;
-    private final String stadium;
-    private final List<Player> players;
-    private Coach coach;
-    private final CollectiveStatistics collectiveStatistics;
+    private int yearFounded;
+    private int points;
+    private CollectiveStatistics statistics;
 
-    public Team(String name, String acronym, int yearFounded, String stadium) {
+
+    public Team(String name) {
         this.name = name;
+        this.stadium = stadium;
         this.acronym = acronym;
         this.yearFounded = yearFounded;
-        this.stadium = stadium;
-        this.players = new ArrayList<>();
-        this.collectiveStatistics = new CollectiveStatistics();
+        this.points = points;
+        this.statistics = statistics != null ? statistics : new CollectiveStatistics();
     }
 
-    // Méthodes set pour les attributs modifiables
-    public void setAcronym(String acronym) {
-        this.acronym = acronym;
+
+    public Team(String name, String acronym, int yearFounded, String stadium) {
+        this(name);
     }
 
-    public String getAcronym() {
-        return acronym;
+
+    public Team(String o, String santiagoBernabeu, String name, String stadium) {
+        this(name);
     }
 
-    // Autres getters...
 
     public String getName() {
         return name;
-    }
-
-    public int getYearFounded() {
-        return yearFounded;
     }
 
     public String getStadium() {
         return stadium;
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public String getAcronym() {
+        return acronym;
     }
 
-    public Coach getCoach() {
-        return coach;
+    public int getYearFounded() {
+        return yearFounded;
     }
 
-    public void setCoach(Coach coach) {
-        this.coach = coach;
+    public int getPoints() {
+        return points;
     }
 
-    public CollectiveStatistics getCollectiveStatistics() {
-        return collectiveStatistics;
+    public CollectiveStatistics getStatistics() {
+        return statistics;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStadium(String stadium) {
+        this.stadium = stadium;
+    }
+
+    public void setAcronym(String acronym) {
+        this.acronym = acronym;
+    }
+
+    public void setYearFounded(int yearFounded) {
+        this.yearFounded = yearFounded;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public void setStatistics(CollectiveStatistics statistics) {
+        this.statistics = statistics;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name='" + name + '\'' +
+                ", stadium='" + stadium + '\'' +
+                ", acronym='" + acronym + '\'' +
+                ", yearFounded=" + yearFounded +
+                ", points=" + points +
+                ", statistics=" + statistics +
+                '}';
     }
 }

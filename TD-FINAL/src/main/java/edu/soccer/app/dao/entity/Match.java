@@ -1,48 +1,84 @@
 package edu.soccer.app.dao.entity;
 
-import java.time.LocalDateTime;
-
 public class Match {
     private Team homeTeam;
     private Team awayTeam;
-    private LocalDateTime dateTime;
-    private String stadium;
     private Season season;
+    private int homeScore;
+    private int awayScore;
 
-    public Match() {
+    // Constructor to initialize the match with teams and season
+    public Match(Team homeTeam, Team awayTeam, Season season) {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
-        this.dateTime = dateTime;
-        this.stadium = stadium;
         this.season = season;
+        this.homeScore = 0;  // Default score
+        this.awayScore = 0;  // Default score
     }
 
-    public void play() {
-        // Logic
-    }
-
-    public String getResult() {
-        // Logic
-        return null;
-    }
-
+    // Getter and Setter methods
     public Team getHomeTeam() {
         return homeTeam;
+    }
+
+    public void setHomeTeam(Team homeTeam) {
+        this.homeTeam = homeTeam;
     }
 
     public Team getAwayTeam() {
         return awayTeam;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public String getStadium() {
-        return stadium;
+    public void setAwayTeam(Team awayTeam) {
+        this.awayTeam = awayTeam;
     }
 
     public Season getSeason() {
         return season;
+    }
+
+    public void setSeason(Season season) {
+        this.season = season;
+    }
+
+    public int getHomeScore() {
+        return homeScore;
+    }
+
+    public void setHomeScore(int homeScore) {
+        this.homeScore = homeScore;
+    }
+
+    public int getAwayScore() {
+        return awayScore;
+    }
+
+    public void setAwayScore(int awayScore) {
+        this.awayScore = awayScore;
+    }
+
+    // Method to simulate the match by setting the scores
+    public void play(int homeScore, int awayScore) {
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
+    }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "homeTeam=" + homeTeam.getName() +
+                ", awayTeam=" + awayTeam.getName() +
+                ", season=" + season.getLabel() +
+                ", homeScore=" + homeScore +
+                ", awayScore=" + awayScore +
+                '}';
+    }
+
+    public String getDateTime() {
+        return null;
+    }
+
+    public String getStadium() {
+        return null;
     }
 }

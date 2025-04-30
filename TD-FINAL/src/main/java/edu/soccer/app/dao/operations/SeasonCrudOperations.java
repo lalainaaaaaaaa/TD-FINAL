@@ -2,16 +2,25 @@ package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.Season;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SeasonCrudOperations {
     private static List<Season> seasons = new ArrayList<>();
 
-    static {
-        seasons.add(new Season(2021));
-        seasons.add(new Season(2022));
-        seasons.add(new Season(2023));
+    public static void loadSeasonsFromDatabase(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM Season";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int year = rs.getInt("year");
+                String name = rs.getString("name");
+                seasons.add(new Season(year));
+            }
+        }
     }
 
     public static Season getSeasonByYear(int year) {

@@ -1,17 +1,17 @@
 package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.Team;
+import edu.soccer.app.dao.entity.BestTeam;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamCrudOperations {
+public class BestTeamCrudOperations {
+
     private static List<Team> teams = new ArrayList<>();
 
-    static {
-        teams.add(new Team("RMA", "Santiago Bernabeu", "Real Madrid FC", "Santiago Bernabeu"));
-        teams.add(new Team("FCB", "Santiago Bernabeu", "FC Barcelone", "Lluís Companys"));
-        teams.add(new Team("MCI", "Santiago Bernabeu", "Manchester City", "Etihad Stadium"));
+    public static void addTeam(Team team) {
+        teams.add(team);
     }
 
     public static Team getTeamByName(String name) {
@@ -23,23 +23,26 @@ public class TeamCrudOperations {
         return null;
     }
 
-    public static List<Team> findAll() {
-        return new ArrayList<>(teams);
-    }
-
-    public static void addTeam(Team team) {
-        teams.add(team);
-    }
-
     public static void updateTeam(Team updatedTeam) {
         Team existingTeam = getTeamByName(updatedTeam.getName());
         if (existingTeam != null) {
+            existingTeam.setStadium(updatedTeam.getStadium());
+            existingTeam.setPoints(updatedTeam.getPoints());
             existingTeam.setAcronym(updatedTeam.getAcronym());
-            // Vous pouvez ajouter d'autres mises à jour ici si nécessaire
+            existingTeam.setYearFounded(updatedTeam.getYearFounded());
+            existingTeam.setStatistics(updatedTeam.getStatistics());
         }
     }
 
     public static void deleteTeam(String name) {
         teams.removeIf(team -> team.getName().equalsIgnoreCase(name));
+    }
+
+    public static Team getBestTeam() {
+        return BestTeam.bestTeam(teams);
+    }
+
+    public static List<Team> findAll() {
+        return new ArrayList<>(teams);
     }
 }

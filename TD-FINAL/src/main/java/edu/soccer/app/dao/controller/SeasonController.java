@@ -24,4 +24,14 @@ public class SeasonController {
     public void addSeason(@RequestBody Season season) {
         seasonService.save(season);
     }
+
+    @PutMapping
+    public void updateSeason(@RequestBody Season season) {
+        seasonService.update(season);
+    }
+
+    @DeleteMapping("/{year}")
+    public void deleteSeason(@PathVariable int year) {
+        seasonService.delete(year);
+    }
 }

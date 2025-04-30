@@ -28,7 +28,7 @@ public class APIManagement {
     public void retrieveChampionshipStatistics(Championship championship) {
         System.out.println("Retrieving statistics for championship: " + championship.getName());
         for (var team : championship.getTeams()) {
-            var stats = team.getCollectiveStatistics();
+            var stats = team.getStatistics();
             System.out.println("Team: " + team.getName() + ", Points: " + stats.getPoints());
         }
     }

@@ -1,6 +1,8 @@
 package edu.soccer.app.repository;
 
 import edu.soccer.app.dao.entity.Match;
+import edu.soccer.app.dao.entity.Team;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,14 @@ public class MatchRepository {
 
     public List<Match> findAll() throws SQLException {
         List<Match> matches = new ArrayList<>();
-        String sql = "SELECT * FROM matches";
+        String sql = "SELECT * FROM Match";
+
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Match match = new Match();
+                Team homeTeam = new Team(null, "Santiago Bernabeu", rs.getString("homeTeam"), null); // Remplacer null par l'acronyme et l'année
+                Team awayTeam = new Team(null, "Santiago Bernabeu", rs.getString("awayTeam"), null); // Remplacer null par l'acronyme et l'année
+
+                Match match = new Match(homeTeam, awayTeam, null);
                 matches.add(match);
             }
         }
@@ -31,7 +37,7 @@ public class MatchRepository {
             pstmt.setString(2, match.getAwayTeam().getName());
             pstmt.setTimestamp(3, Timestamp.valueOf(match.getDateTime()));
             pstmt.setString(4, match.getStadium());
-            pstmt.setString(5, match.getSeason().getYear());
+            pstmt.setInt(5, match.getSeason().getYear()); // Correction pour passer un entier
             pstmt.executeUpdate();
         }
     }

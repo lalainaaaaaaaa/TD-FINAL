@@ -1,4 +1,4 @@
-INSERT INTO Team (name, acronym, yearFounded, stadium, championshipId) VALUES
+INSERT INTO Team (name, acronym, yearFounded, stadium, "championshipId") VALUES
                                                                            ('Real Madrid FC', 'RMA', 1902, 'Santiago Bernabeu', 2),
                                                                            ('FC Barcelone', 'FCB', 1899, 'Lluís Companys', 2),
                                                                            ('Manchester City', 'MCI', 1880, 'Etihad Stadium', 1),

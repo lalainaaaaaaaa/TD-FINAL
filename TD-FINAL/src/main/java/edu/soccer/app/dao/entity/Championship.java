@@ -6,13 +6,15 @@ import java.util.List;
 public class Championship {
     private final String name;
     private final String country;
-    private final List<Team> teams;
+    private List<Team> teams;
+    private List<Match> matches;
     private Season currentSeason;
 
     public Championship(String name, String country) {
         this.name = name;
         this.country = country;
         this.teams = new ArrayList<>();
+        this.matches = new ArrayList<>();
     }
 
     public void addTeam(Team team) {
@@ -20,11 +22,26 @@ public class Championship {
     }
 
     public void generateMatches() {
-        // Logic to generate matches for the current season
+        if (currentSeason == null) {
+            throw new IllegalStateException("The current season is not defined.");
+        }
+        matches.clear(); // vide la liste précédente si nécessaire
+        for (int i = 0; i < teams.size(); i++) {
+            for (int j = i + 1; j < teams.size(); j++) {
+                Team homeTeam = teams.get(i);
+                Team awayTeam = teams.get(j);
+                matches.add(new Match(homeTeam, awayTeam, currentSeason));
+                matches.add(new Match(awayTeam, homeTeam, currentSeason));
+            }
+        }
     }
 
     public void endSeason() {
-        // Logic to end the season
+        if (currentSeason != null) {
+            System.out.println("The " + currentSeason.getYear() + " season has ended.");
+        } else {
+            throw new IllegalStateException("No ongoing season to end.");
+        }
     }
 
     public String getName() {
@@ -45,5 +62,9 @@ public class Championship {
 
     public void setCurrentSeason(Season currentSeason) {
         this.currentSeason = currentSeason;
+    }
+
+    public List<Match> getMatches() {
+        return matches;
     }
 }
