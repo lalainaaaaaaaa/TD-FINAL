@@ -1,50 +1,18 @@
 package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.Player;
-import edu.soccer.app.dao.entity.BestPlayer;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class BestPlayerCrudOperations {
+public interface BestPlayerCrudOperations {
+    void addPlayer(Player player);
 
-    private static List<Player> players = new ArrayList<>();
+    Player getPlayerByName(String name);
 
-    public static void addPlayer(Player player) {
-        players.add(player);
-    }
+    void updatePlayer(Player updatedPlayer);
 
-    public static Player getPlayerByName(String name) {
-        for (Player player : players) {
-            if (player.getName().equalsIgnoreCase(name)) {
-                return player;
-            }
-        }
-        return null;
-    }
+    void deletePlayer(String name);
 
-    public static void updatePlayer(Player updatedPlayer) {
-        Player existingPlayer = getPlayerByName(updatedPlayer.getName());
-        if (existingPlayer != null) {
-            existingPlayer.updatePosition(updatedPlayer.getPosition());
-            existingPlayer.updateNationality(updatedPlayer.getNationality());
-            existingPlayer.updateAge(updatedPlayer.getAge());
+    Player getBestPlayer();
 
-
-            existingPlayer.getIndividualStatistics().setGoals(updatedPlayer.getIndividualStatistics().getGoals());
-            existingPlayer.getIndividualStatistics().setPlayingTime(updatedPlayer.getIndividualStatistics().getPlayingTime());
-        }
-    }
-
-    public static void deletePlayer(String name) {
-        players.removeIf(player -> player.getName().equalsIgnoreCase(name));
-    }
-
-    public static Player getBestPlayer() {
-        return BestPlayer.bestPlayer(players);
-    }
-
-    public static List<Player> findAll() {
-        return new ArrayList<>(players);
-    }
+    List<Player> findAll();
 }

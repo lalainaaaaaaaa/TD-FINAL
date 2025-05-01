@@ -22,6 +22,9 @@ public class PlayerService {
     }
 
     public void save(Player player) {
+        if (player.getName() == null || player.getName().isEmpty()) {
+            throw new IllegalArgumentException("Player name cannot be null or empty.");
+        }
         try {
             playerRepository.save(player);
         } catch (SQLException e) {

@@ -24,16 +24,12 @@ public class BestMatchRepository {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-
                 Team homeTeam = findTeamByName(rs.getString("home_team"));
                 Team awayTeam = findTeamByName(rs.getString("away_team"));
                 Season season = findSeasonById(rs.getInt("season_id"));
 
                 Match match = new Match(homeTeam, awayTeam, season);
-
                 match.play(rs.getInt("home_score"), rs.getInt("away_score"));
-
-
                 matches.add(match);
             }
         }
@@ -46,17 +42,13 @@ public class BestMatchRepository {
         return BestMatch.bestMatch(matches);
     }
 
-    // Méthodes d'assistance pour charger les objets complexes :
-
     private Team findTeamByName(String name) throws SQLException {
         String sql = "SELECT * FROM Team WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Team(
-                            rs.getString("stadium"), "Santiago Bernabeu", rs.getString("name"), null
-                    );
+                    return new Team(rs.getString("name")); // Ajuster selon vos propriétés
                 }
             }
         }
@@ -69,7 +61,7 @@ public class BestMatchRepository {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Season(rs.getInt("id"));
+                    return new Season(rs.getInt("id")); // Ajuster selon vos propriétés
                 }
             }
         }

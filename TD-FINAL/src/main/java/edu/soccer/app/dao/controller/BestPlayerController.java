@@ -5,6 +5,7 @@ import edu.soccer.app.dao.service.BestPlayerService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/players/best")
@@ -17,6 +18,7 @@ public class BestPlayerController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public Player getBestPlayer(@RequestBody List<Player> players) {
         return bestPlayerService.getBestPlayer(players);
     }

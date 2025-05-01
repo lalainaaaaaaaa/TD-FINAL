@@ -25,6 +25,9 @@ public class ChampionshipRepository {
     }
 
     public void save(Championship championship) throws SQLException {
+        if (championship.getName() == null || championship.getName().isEmpty()) {
+            throw new IllegalArgumentException("Championship name cannot be null or empty.");
+        }
         String sql = "INSERT INTO Championship (name, country) VALUES (?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, championship.getName());

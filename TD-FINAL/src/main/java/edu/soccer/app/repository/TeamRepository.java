@@ -17,12 +17,7 @@ public class TeamRepository {
         String sql = "SELECT * FROM Team";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Team team = new Team(
-                        rs.getString("name"),
-                        rs.getString("acronym"),
-                        rs.getInt("yearFounded"),
-                        rs.getString("stadium")
-                );
+                Team team = new Team(rs.getString("name"));
                 teams.add(team);
             }
         }
@@ -30,6 +25,9 @@ public class TeamRepository {
     }
 
     public void save(Team team) throws SQLException {
+        if (team.getName() == null || team.getName().isEmpty()) {
+            throw new IllegalArgumentException("Team name cannot be null or empty.");
+        }
         String sql = "INSERT INTO Team (name, acronym, yearFounded, stadium) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, team.getName());
@@ -41,6 +39,9 @@ public class TeamRepository {
     }
 
     public void update(Team team) throws SQLException {
+        if (team.getName() == null || team.getName().isEmpty()) {
+            throw new IllegalArgumentException("Team name cannot be null or empty.");
+        }
         String sql = "UPDATE Team SET acronym = ?, yearFounded = ?, stadium = ? WHERE name = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, team.getAcronym());

@@ -22,6 +22,9 @@ public class ChampionshipService {
     }
 
     public void save(Championship championship) {
+        if (championship.getName() == null || championship.getName().isEmpty()) {
+            throw new IllegalArgumentException("Championship name cannot be null or empty.");
+        }
         try {
             championshipRepository.save(championship);
         } catch (SQLException e) {

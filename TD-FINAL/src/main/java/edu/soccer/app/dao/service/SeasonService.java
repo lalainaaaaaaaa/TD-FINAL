@@ -22,6 +22,10 @@ public class SeasonService {
     }
 
     public void save(Season season) {
+        // Validation des données
+        if (season.getYear() <= 0) {
+            throw new IllegalArgumentException("Season year must be greater than zero.");
+        }
         try {
             seasonRepository.save(season);
         } catch (SQLException e) {

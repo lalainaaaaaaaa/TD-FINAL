@@ -18,47 +18,36 @@ public class MatchRepository {
         List<Match> matches = new ArrayList<>();
         String sql = "SELECT * FROM Match";
 
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Team homeTeam = new Team(null, "Santiago Bernabeu", rs.getString("homeTeam"), null); // Remplacer null par l'acronyme et l'année
-                Team awayTeam = new Team(null, "Santiago Bernabeu", rs.getString("awayTeam"), null); // Remplacer null par l'acronyme et l'année
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
-                Match match = new Match(homeTeam, awayTeam, null);
+            while (rs.next()) {
+                Team homeTeam = findTeamByName(rs.getString("home_team"));
+                Team awayTeam = findTeamByName(rs.getString("away_team"));
+                Match match = new Match(homeTeam, awayTeam, null); // Remplir les détails nécessaires
                 matches.add(match);
             }
         }
+
         return matches;
     }
 
-    public void save(Match match) throws SQLException {
-        String sql = "INSERT INTO Match (homeTeam, awayTeam, dateTime, stadium, season) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, match.getHomeTeam().getName());
-            pstmt.setString(2, match.getAwayTeam().getName());
-            pstmt.setTimestamp(3, Timestamp.valueOf(match.getDateTime()));
-            pstmt.setString(4, match.getStadium());
-            pstmt.setInt(5, match.getSeason().getYear()); // Correction pour passer un entier
-            pstmt.executeUpdate();
+    // Ajoutez validation et gestion des erreurs dans d'autres méthodes comme save, update, delete
+
+    private Team findTeamByName(String name) throws SQLException {
+        String sql = "SELECT * FROM Team WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Team(rs.getString("name")); // Ajuster selon vos propriétés
+                }
+            }
         }
+        throw new SQLException("Team not found: " + name);
     }
 
-    public void update(Match match) throws SQLException {
-        String sql = "UPDATE Match SET dateTime = ?, stadium = ? WHERE homeTeam = ? AND awayTeam = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setTimestamp(1, Timestamp.valueOf(match.getDateTime()));
-            pstmt.setString(2, match.getStadium());
-            pstmt.setString(3, match.getHomeTeam().getName());
-            pstmt.setString(4, match.getAwayTeam().getName());
-            pstmt.executeUpdate();
-        }
-    }
-
-    public void delete(String homeTeam, String awayTeam) throws SQLException {
-        String sql = "DELETE FROM Match WHERE homeTeam = ? AND awayTeam = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, homeTeam);
-            pstmt.setString(2, awayTeam);
-            pstmt.executeUpdate();
-        }
+    public void save(Match match) {
+        return;
     }
 }

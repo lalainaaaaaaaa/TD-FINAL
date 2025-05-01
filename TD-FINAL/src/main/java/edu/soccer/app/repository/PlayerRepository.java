@@ -17,9 +17,13 @@ public class PlayerRepository {
         String sql = "SELECT * FROM Player";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Player player = new Player(rs.getString("name"), rs.getInt("number"),
-                        rs.getString("position"), rs.getString("nationality"),
-                        rs.getInt("age"));
+                Player player = new Player(
+                        rs.getString("name"),
+                        rs.getInt("number"),
+                        rs.getString("position"),
+                        rs.getString("nationality"),
+                        rs.getInt("age")
+                );
                 players.add(player);
             }
         }
@@ -27,6 +31,9 @@ public class PlayerRepository {
     }
 
     public void save(Player player) throws SQLException {
+        if (player.getName() == null || player.getName().isEmpty()) {
+            throw new IllegalArgumentException("Player name cannot be null or empty.");
+        }
         String sql = "INSERT INTO Player (name, number, position, nationality, age) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, player.getName());

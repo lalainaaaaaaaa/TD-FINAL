@@ -22,10 +22,6 @@ public class MatchService {
     }
 
     public void save(Match match) {
-        try {
-            matchRepository.save(match);
-        } catch (SQLException e) {
-            throw new RuntimeException("Error saving match", e);
-        }
+        matchRepository.save(match);
     }
 }

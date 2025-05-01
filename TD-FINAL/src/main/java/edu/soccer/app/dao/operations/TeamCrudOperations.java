@@ -1,45 +1,16 @@
 package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.Team;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class TeamCrudOperations {
-    private static List<Team> teams = new ArrayList<>();
+public interface TeamCrudOperations {
+    Team getTeamByName(String name);
 
-    static {
-        teams.add(new Team("RMA", "Santiago Bernabeu", "Real Madrid FC", "Santiago Bernabeu"));
-        teams.add(new Team("FCB", "Santiago Bernabeu", "FC Barcelone", "Lluís Companys"));
-        teams.add(new Team("MCI", "Santiago Bernabeu", "Manchester City", "Etihad Stadium"));
-    }
+    List<Team> findAll();
 
-    public static Team getTeamByName(String name) {
-        for (Team team : teams) {
-            if (team.getName().equalsIgnoreCase(name)) {
-                return team;
-            }
-        }
-        return null;
-    }
+    void addTeam(Team team);
 
-    public static List<Team> findAll() {
-        return new ArrayList<>(teams);
-    }
+    void updateTeam(Team updatedTeam);
 
-    public static void addTeam(Team team) {
-        teams.add(team);
-    }
-
-    public static void updateTeam(Team updatedTeam) {
-        Team existingTeam = getTeamByName(updatedTeam.getName());
-        if (existingTeam != null) {
-            existingTeam.setAcronym(updatedTeam.getAcronym());
-            // Vous pouvez ajouter d'autres mises à jour ici si nécessaire
-        }
-    }
-
-    public static void deleteTeam(String name) {
-        teams.removeIf(team -> team.getName().equalsIgnoreCase(name));
-    }
+    void deleteTeam(String name);
 }

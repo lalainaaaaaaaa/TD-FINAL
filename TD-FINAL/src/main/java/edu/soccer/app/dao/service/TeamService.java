@@ -22,6 +22,9 @@ public class TeamService {
     }
 
     public void save(Team team) {
+        if (team.getName() == null || team.getName().isEmpty()) {
+            throw new IllegalArgumentException("Team name cannot be null or empty.");
+        }
         try {
             teamRepository.save(team);
         } catch (SQLException e) {

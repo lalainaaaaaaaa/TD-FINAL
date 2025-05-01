@@ -15,7 +15,6 @@ public class SeasonRepository {
     public List<Season> findAll() throws SQLException {
         List<Season> seasons = new ArrayList<>();
         String sql = "SELECT * FROM Season";
-
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int year = rs.getInt("year");
@@ -27,6 +26,9 @@ public class SeasonRepository {
     }
 
     public void save(Season season) throws SQLException {
+        if (season.getYear() <= 0) {
+            throw new IllegalArgumentException("Season year must be greater than zero.");
+        }
         String sql = "INSERT INTO Season (year) VALUES (?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, season.getYear());

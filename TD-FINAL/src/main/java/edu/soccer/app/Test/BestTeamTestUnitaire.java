@@ -2,22 +2,26 @@ package edu.soccer.app.Test;
 
 import edu.soccer.app.dao.entity.Team;
 import edu.soccer.app.dao.operations.BestTeamCrudOperations;
+import edu.soccer.app.dao.operations.BestTeamCrudOperationsImpl;
 
 import java.util.List;
 
 public class BestTeamTestUnitaire {
 
     public static void main(String[] args) {
-        Team real = new Team("Real Madrid FC", "RMA", 1902, "Santiago Bernabeu");
+        Team real = new Team("Real Madrid FC");
         real.setPoints(10);
 
-        Team barca = new Team("FC Barcelone", "FCB", 1899, "Lluís Companys");
+        Team barca = new Team("FC Barcelone");
         barca.setPoints(12);
 
-        BestTeamCrudOperations.addTeam(real);
-        BestTeamCrudOperations.addTeam(barca);
 
-        List<Team> teams = BestTeamCrudOperations.findAll();
+        BestTeamCrudOperations teamService = new BestTeamCrudOperationsImpl();
+
+        teamService.addTeam(real);
+        teamService.addTeam(barca);
+
+        List<Team> teams = teamService.findAll();
         System.out.println("Teams after add:");
         teams.forEach(System.out::println);
         if (teams.size() == 2 && teams.contains(real) && teams.contains(barca)) {
@@ -26,20 +30,20 @@ public class BestTeamTestUnitaire {
             System.out.println("Add and findAll: FAILED");
         }
 
-        Team updatedReal = new Team("Real Madrid FC", "RMA", 1902, "Santiago Bernabeu");
+        Team updatedReal = new Team("Real Madrid FC");
         updatedReal.setPoints(15);
-        BestTeamCrudOperations.updateTeam(updatedReal);
+        teamService.updateTeam(updatedReal);
 
-        Team foundReal = BestTeamCrudOperations.getTeamByName("Real Madrid FC");
+        Team foundReal = teamService.getTeamByName("Real Madrid FC");
         System.out.println("Updated Real: " + foundReal);
         if (foundReal != null && foundReal.getPoints() == 15) {
             System.out.println("Update team: OK");
         } else {
-            System.out.println(" Update team: FAILED");
+            System.out.println("Update team: FAILED");
         }
 
-        BestTeamCrudOperations.deleteTeam("FC Barcelone");
-        teams = BestTeamCrudOperations.findAll();
+        teamService.deleteTeam("FC Barcelone");
+        teams = teamService.findAll();
         boolean barcaDeleted = true;
         for (Team t : teams) {
             if (t.getName().equals("FC Barcelone")) {
@@ -55,7 +59,7 @@ public class BestTeamTestUnitaire {
             System.out.println("Delete team: FAILED");
         }
 
-        Team best = BestTeamCrudOperations.getBestTeam();
+        Team best = teamService.getBestTeam();
         System.out.println("Best team: " + best);
         if (best != null && best.getName().equals("Real Madrid FC")) {
             System.out.println("Best team check: OK");
