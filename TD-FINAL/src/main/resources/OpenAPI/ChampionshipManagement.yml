@@ -1,0 +1,231 @@
+openapi: 3.0.0
+info:
+  title: Football Championship Management API
+  description: API for managing championships, teams, players, matches, seasons, rankings, and statistics.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /players:
+    get:
+      summary: Retrieve all players
+      responses:
+        '200':
+          description: List of players
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+        '500':
+          description: Internal server error
+    post:
+      summary: Add a new player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+            example:
+              name: "Vinicius Jr"
+              number: 7
+              position: "Forward"
+              nationality: "Brazilian"
+              age: 24
+      responses:
+        '201':
+          description: Player created
+        '400':
+          description: Invalid data
+
+  /players/{id}:
+    get:
+      summary: Retrieve a player by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Player ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '404':
+          description: Player not found
+        '500':
+          description: Internal server error
+
+  /matches:
+    get:
+      summary: Retrieve all matches
+      responses:
+        '200':
+          description: List of matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Match'
+        '500':
+          description: Internal server error
+    post:
+      summary: Add a new match
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Match'
+            example:
+              homeTeam: "Real Madrid FC"
+              awayTeam: "FC Barcelona"
+              stadium: "Santiago Bernabeu"
+              dateTime: "2025-05-01T21:00:00Z"
+              season: "2024-2025"
+      responses:
+        '201':
+          description: Match created
+        '400':
+          description: Invalid data
+
+  /seasons:
+    get:
+      summary: Retrieve all seasons
+      responses:
+        '200':
+          description: List of seasons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Season'
+        '500':
+          description: Internal server error
+    post:
+      summary: Add a new season
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Season'
+            example:
+              name: "2024-2025"
+              startDate: "2024-09-01"
+              endDate: "2025-06-30"
+      responses:
+        '201':
+          description: Season created
+        '400':
+          description: Invalid data
+
+components:
+  schemas:
+    Player:
+      type: object
+      description: Represents a football player.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the player.
+          example: "player123"
+        name:
+          type: string
+          description: Name of the player.
+          example: "Vinicius Jr"
+        number:
+          type: integer
+          description: Player's jersey number.
+          example: 7
+        position:
+          type: string
+          description: Player's position on the field.
+          example: "Forward"
+        nationality:
+          type: string
+          description: Player's nationality.
+          example: "Brazilian"
+        age:
+          type: integer
+          description: Age of the player.
+          example: 24
+
+    Match:
+      type: object
+      description: Represents a football match.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the match.
+          example: "match123"
+        homeTeam:
+          type: string
+          description: Home team name.
+          example: "Real Madrid FC"
+        awayTeam:
+          type: string
+          description: Away team name.
+          example: "FC Barcelona"
+        stadium:
+          type: string
+          description: Name of the stadium where the match is played.
+          example: "Santiago Bernabeu"
+        dateTime:
+          type: string
+          format: date-time
+          description: Date and time of the match.
+          example: "2025-05-01T21:00:00Z"
+        season:
+          type: string
+          description: The season the match belongs to.
+          example: "2024-2025"
+
+    Season:
+      type: object
+      description: Represents a football season.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the season.
+          example: "season123"
+        name:
+          type: string
+          description: Name of the season.
+          example: "2024-2025"
+        startDate:
+          type: string
+          format: date
+          description: Start date of the season.
+          example: "2024-09-01"
+        endDate:
+          type: string
+          format: date
+          description: End date of the season.
+          example: "2025-06-30"
+
+    Coach:
+      type: object
+      description: Represents a coach.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the coach.
+          example: "coach789"
+        name:
+          type: string
+          description: Name of the coach.
+          example: "Carlo Ancelotti"
+        nationality:
+          type: string
+          description: Nationality of the coach.
+          example: "Italian"
