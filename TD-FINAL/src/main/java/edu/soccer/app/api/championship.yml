@@ -46,107 +46,47 @@ paths:
                   $ref: '#/components/schemas/Player'
         '500':
           description: Internal server error
-    post:
-      summary: Add a new player
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Player'
-            example:
-              name: "Vinicius Jr"
-              number: 7
-              position: "Forward"
-              nationality: "Brazilian"
-              age: 24
-      responses:
-        '201':
-          description: Player created
-        '400':
-          description: Invalid data
-
-  /players/{id}:
-    get:
-      summary: Retrieve a player by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Player ID
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Player found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Player'
-        '404':
-          description: Player not found
-        '500':
-          description: Internal server error
     put:
       summary: Update a player
       parameters:
         - name: id
-          in: path
+          in: query
+          description: ID of the player to update
           required: true
-          description: Player ID
           schema:
             type: string
+        - name: notify
+          in: query
+          description: Whether to notify the player about the update
+          required: false
+          schema:
+            type: boolean
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Player'
+              $ref: '#/components/schemas/PlayerUpdate'
       responses:
         '200':
-          description: Player updated
+          description: Player updated successfully
+        '400':
+          description: Invalid data
         '404':
           description: Player not found
-        '400':
-          description: Invalid data
-
-  /matches:
-    get:
-      summary: Retrieve all matches
-      responses:
-        '200':
-          description: List of matches
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Match'
         '500':
           description: Internal server error
-    post:
-      summary: Add a new match
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Match'
-            example:
-              homeTeam: "Real Madrid FC"
-              awayTeam: "FC Barcelona"
-              stadium: "Santiago Bernabeu"
-              dateTime: "2025-05-01T21:00:00Z"
-              season: "2024-2025"
-      responses:
-        '201':
-          description: Match created
-        '400':
-          description: Invalid data
 
   /seasons:
     get:
       summary: Retrieve all seasons
+      parameters:
+        - name: includeInactive
+          in: query
+          description: Whether to include inactive seasons
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: List of seasons
@@ -160,30 +100,38 @@ paths:
           description: Internal server error
     post:
       summary: Add a new season
+      parameters:
+        - name: notifyTeams
+          in: query
+          description: Whether to notify all teams about the new season
+          required: false
+          schema:
+            type: boolean
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Season'
-            example:
-              name: "2024-2025"
-              startDate: "2024-09-01"
-              endDate: "2025-06-30"
       responses:
         '201':
-          description: Season created
+          description: Season created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Season'
         '400':
           description: Invalid data
+        '500':
+          description: Internal server error
 
-  /seasons/{seasonYear}:
+  /seasons/{seasonYear}/status:
     put:
-      summary: Update season status
+      summary: Update the status of a season
       parameters:
         - name: seasonYear
           in: path
           required: true
-          description: Year of the season to update
           schema:
             type: string
       requestBody:
@@ -192,140 +140,49 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - status
               properties:
                 status:
                   type: string
-                  example: "active"
+                  example: "FINISHED"
       responses:
         '200':
-          description: Season status updated
+          description: Season status updated successfully
         '404':
           description: Season not found
-        '400':
-          description: Invalid data
-
-  /players/{id}/statistics/{seasonYear}:
-    get:
-      summary: Retrieve a player's statistics for a specific season
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Player ID
-          schema:
-            type: string
-        - name: seasonYear
-          in: path
-          required: true
-          description: Year of the season
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Player statistics found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Statistics'
-        '404':
-          description: Player or season not found
-        '500':
-          description: Internal server error
-
-  /matchMaker/{seasonYear}:
-    post:
-      summary: Generate matches for a specific season
-      parameters:
-        - name: seasonYear
-          in: path
-          required: true
-          description: Year of the season
-          schema:
-            type: string
-      responses:
-        '201':
-          description: Matches generated
-        '404':
-          description: Season not found
-        '500':
-          description: Internal server error
-
-  /matches/{seasonYear}:
-    get:
-      summary: Retrieve all matches for a specific season
-      parameters:
-        - name: seasonYear
-          in: path
-          required: true
-          description: Year of the season
-          schema:
-            type: string
-      responses:
-        '200':
-          description: List of matches for the season
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Match'
-        '404':
-          description: Season not found
-        '500':
-          description: Internal server error
-
-  /matches/{id}/status:
-    put:
-      summary: Update the status of a match
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Match ID
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Match status updated
-        '404':
-          description: Match not found
-        '400':
-          description: Invalid data
-
-  /matches/{id}/goals:
-    post:
-      summary: Update the goals for a match
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Match ID
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                homeScore:
-                  type: integer
-                  example: 2
-                awayScore:
-                  type: integer
-                  example: 1
-      responses:
-        '200':
-          description: Goals updated
-        '404':
-          description: Match not found
         '400':
           description: Invalid data
 
   /clubs:
     get:
       summary: Retrieve all clubs
+      parameters:
+        - name: city
+          in: query
+          description: Filter clubs by city
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: Filter clubs by name
+          required: false
+          schema:
+            type: string
+        - name: active
+          in: query
+          description: Filter clubs by their activity status (active or inactive)
+          required: false
+          schema:
+            type: boolean
+        - name: minPlayers
+          in: query
+          description: Filter clubs by minimum number of players
+          required: false
+          schema:
+            type: integer
+            example: 11  # Example of a club with at least 11 players
       responses:
         '200':
           description: List of clubs
@@ -337,30 +194,21 @@ paths:
                   $ref: '#/components/schemas/Club'
         '500':
           description: Internal server error
-    post:
-      summary: Add a new club
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Club'
-      responses:
-        '201':
-          description: Club created
-        '400':
-          description: Invalid data
-
-  /clubs/{id}:
     put:
       summary: Update a club
       parameters:
         - name: id
-          in: path
+          in: query
+          description: ID of the club to update
           required: true
-          description: Club ID
           schema:
             type: string
+        - name: notifyPlayers
+          in: query
+          description: Whether to notify all players in the club about the update
+          required: false
+          schema:
+            type: boolean
       requestBody:
         required: true
         content:
@@ -369,124 +217,11 @@ paths:
               $ref: '#/components/schemas/Club'
       responses:
         '200':
-          description: Club updated
-        '404':
-          description: Club not found
+          description: Club updated successfully
         '400':
           description: Invalid data
-
-  /clubs/{id}/players:
-    get:
-      summary: Retrieve all players in a club
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Club ID
-          schema:
-            type: string
-      responses:
-        '200':
-          description: List of players in the club
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Player'
         '404':
           description: Club not found
-        '500':
-          description: Internal server error
-    put:
-      summary: Update players in a club
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Club ID
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                players:
-                  type: array
-                  items:
-                    type: string
-                    description: Player IDs
-                  example: ["player123", "player456"]
-                removePlayers:
-                  type: boolean
-                  description: Whether to remove players not in the list
-                  example: true
-      responses:
-        '200':
-          description: Club players updated
-        '404':
-          description: Club not found
-        '400':
-          description: Invalid data
-    post:
-      summary: Add a player to a club
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Club ID
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                playerId:
-                  type: string
-                  description: Player ID to add to the club
-                  example: "player123"
-      responses:
-        '201':
-          description: Player added to club
-        '404':
-          description: Club or player not found
-        '400':
-          description: Invalid data
-
-  /clubs/statistics/{seasonYear}:
-    get:
-      summary: Retrieve statistics for a club in a specific season
-      parameters:
-        - name: seasonYear
-          in: path
-          required: true
-          description: Year of the season
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Club statistics found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  points:
-                    type: integer
-                  goalsFor:
-                    type: integer
-                  goalsAgainst:
-                    type: integer
-                  cleanSheets:
-                    type: integer
-        '404':
-          description: Club or season not found
         '500':
           description: Internal server error
 
@@ -494,116 +229,106 @@ components:
   schemas:
     Player:
       type: object
-      description: Represents a football player.
+      required:
+        - name
+        - number
+        - position
+        - nationality
+        - age
       properties:
         id:
           type: string
-          description: Unique identifier of the player.
-          example: "player123"
         name:
           type: string
-          description: Name of the player.
-          example: "Vinicius Jr"
         number:
           type: integer
-          description: Player's jersey number.
-          example: 7
         position:
           type: string
-          description: Player's position on the field.
-          example: "Forward"
         nationality:
           type: string
-          description: Player's nationality.
-          example: "Brazilian"
         age:
           type: integer
-          description: Age of the player.
-          example: 24
 
-    Match:
+    PlayerUpdate:
       type: object
-      description: Represents a football match.
       properties:
-        id:
-          type: string
-          description: Unique identifier of the match.
-          example: "match123"
-        homeTeam:
-          type: string
-          description: Home team name.
-          example: "Real Madrid FC"
-        awayTeam:
-          type: string
-          description: Away team name.
-          example: "FC Barcelona"
-        stadium:
-          type: string
-          description: Name of the stadium where the match is played.
-          example: "Santiago Bernabeu"
-        dateTime:
-          type: string
-          format: date-time
-          description: Date and time of the match.
-          example: "2025-05-01T21:00:00Z"
-        season:
-          type: string
-          description: The season the match belongs to.
-          example: "2024-2025"
-
-    Season:
-      type: object
-      description: Represents a football season.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the season.
-          example: "season123"
         name:
           type: string
-          description: Name of the season.
-          example: "2024-2025"
-        startDate:
+        number:
+          type: integer
+        position:
           type: string
-          format: date
-          description: Start date of the season.
-          example: "2024-09-01"
-        endDate:
+        nationality:
           type: string
-          format: date
-          description: End date of the season.
-          example: "2025-06-30"
+        age:
+          type: integer
 
     Club:
       type: object
-      description: Represents a football club.
       properties:
         id:
           type: string
-          description: Unique identifier of the club.
-          example: "club123"
         name:
           type: string
-          description: Name of the club.
-          example: "Real Madrid FC"
-        stadium:
+        city:
           type: string
-          description: Name of the club's stadium.
-          example: "Santiago Bernabeu"
-        yearFounded:
-          type: integer
-          description: Year the club was founded.
-          example: 1902
+
+    Season:
+      type: object
+      required:
+        - name
+        - startDate
+        - endDate
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+        homeTeam:
+          type: string
+        awayTeam:
+          type: string
+        date:
+          type: string
+          format: date-time
+        status:
+          type: string
 
     Statistics:
       type: object
-      description: Represents player statistics for a specific season.
       properties:
         goals:
           type: integer
-          description: Number of goals scored.
-          example: 10
-        playingTime:
+        assists:
           type: integer
-          description: Total playing time in minutes.
-          example: 900
+        yellowCards:
+          type: integer
+        redCards:
+          type: integer
+
+    ClubStatistics:
+      type: object
+      properties:
+        teamName:
+          type: string
+        matchesPlayed:
+          type: integer
+        goalsScored:
+          type: integer
+        goalsConceded:
+          type: integer
+        winPercentage:
+          type: number
+          format: float
