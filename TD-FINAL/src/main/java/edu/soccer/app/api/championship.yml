@@ -17,24 +17,28 @@ paths:
           required: false
           schema:
             type: string
+            example: "FC Barcelona"  # Example of club name
         - name: name
           in: query
           description: Filter players by name
           required: false
           schema:
             type: string
+            example: "Lionel Messi"  # Example of player name
         - name: ageMin
           in: query
           description: Minimum age filter
           required: false
           schema:
             type: integer
+            example: 18  # Example of minimum age
         - name: ageMax
           in: query
           description: Maximum age filter
           required: false
           schema:
             type: integer
+            example: 40  # Example of maximum age
       responses:
         '200':
           description: List of players
@@ -55,12 +59,14 @@ paths:
           required: true
           schema:
             type: string
+            example: "12345"  # Example player ID
         - name: notify
           in: query
           description: Whether to notify the player about the update
           required: false
           schema:
             type: boolean
+            example: true  # Example of notification preference
       requestBody:
         required: true
         content:
@@ -87,6 +93,7 @@ paths:
           required: false
           schema:
             type: boolean
+            example: false  # Example of including inactive seasons
       responses:
         '200':
           description: List of seasons
@@ -107,6 +114,7 @@ paths:
           required: false
           schema:
             type: boolean
+            example: true  # Example of notifying teams
       requestBody:
         required: true
         content:
@@ -134,6 +142,7 @@ paths:
           required: true
           schema:
             type: string
+            example: "2024"  # Example of season year
       requestBody:
         required: true
         content:
@@ -145,7 +154,7 @@ paths:
               properties:
                 status:
                   type: string
-                  example: "FINISHED"
+                  example: "FINISHED"  # Example of status
       responses:
         '200':
           description: Season status updated successfully
@@ -164,18 +173,21 @@ paths:
           required: false
           schema:
             type: string
+            example: "Madrid"  # Example of city filter
         - name: name
           in: query
           description: Filter clubs by name
           required: false
           schema:
             type: string
+            example: "FC Barcelona"  # Example of club name
         - name: active
           in: query
           description: Filter clubs by their activity status (active or inactive)
           required: false
           schema:
             type: boolean
+            example: true  # Example of active clubs
         - name: minPlayers
           in: query
           description: Filter clubs by minimum number of players
@@ -203,12 +215,14 @@ paths:
           required: true
           schema:
             type: string
+            example: "67890"  # Example club ID
         - name: notifyPlayers
           in: query
           description: Whether to notify all players in the club about the update
           required: false
           schema:
             type: boolean
+            example: true  # Example of notification preference
       requestBody:
         required: true
         content:
@@ -222,6 +236,82 @@ paths:
           description: Invalid data
         '404':
           description: Club not found
+        '500':
+          description: Internal server error
+
+  /players/{id}/statistics/{seasonYear}:
+    get:
+      summary: Retrieve statistics for a player in a given season
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "12345"  # Example player ID
+        - name: seasonYear
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "2024"  # Example season year
+      responses:
+        '200':
+          description: Player statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+        '404':
+          description: Player or season not found
+        '500':
+          description: Internal server error
+
+  /clubs/{id}/players:
+    get:
+      summary: Retrieve all players for a specific club
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "67890"  # Example club ID
+      responses:
+        '200':
+          description: List of players in the club
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+        '404':
+          description: Club not found
+        '500':
+          description: Internal server error
+
+  /clubs/statistics/{seasonYear}:
+    get:
+      summary: Retrieve statistics for all clubs in a given season
+      parameters:
+        - name: seasonYear
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "2024"  # Example season year
+      responses:
+        '200':
+          description: Club statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClubStatistics'
+        '404':
+          description: Season not found
         '500':
           description: Internal server error
 
@@ -240,28 +330,38 @@ components:
           type: string
         name:
           type: string
+          example: "Lionel Messi"  # Example player name
         number:
           type: integer
+          example: 10  # Example player number
         position:
           type: string
+          example: "Forward"  # Example position
         nationality:
           type: string
+          example: "Argentinian"  # Example nationality
         age:
           type: integer
+          example: 34  # Example age
 
     PlayerUpdate:
       type: object
       properties:
         name:
           type: string
+          example: "Lionel Messi"
         number:
           type: integer
+          example: 10
         position:
           type: string
+          example: "Forward"
         nationality:
           type: string
+          example: "Argentinian"
         age:
           type: integer
+          example: 34
 
     Club:
       type: object
@@ -270,8 +370,10 @@ components:
           type: string
         name:
           type: string
+          example: "FC Barcelona"
         city:
           type: string
+          example: "Barcelona"  # Example city
 
     Season:
       type: object
@@ -284,51 +386,68 @@ components:
           type: string
         name:
           type: string
+          example: "Saison 2024-2025"  # Example season name
         startDate:
           type: string
           format: date
+          example: "2024-09-01"  # Example start date
         endDate:
           type: string
           format: date
+          example: "2025-06-30"  # Example end date
 
     Match:
       type: object
       properties:
         id:
           type: string
+          example: "match_001"  # Example match ID
         homeTeam:
           type: string
+          example: "Real Madrid"  # Example home team
         awayTeam:
           type: string
+          example: "FC Barcelona"  # Example away team
         date:
           type: string
           format: date-time
+          example: "2025-05-01T21:00:00Z"  # Example match date
         status:
           type: string
+          example: "Scheduled"  # Example status
 
     Statistics:
       type: object
       properties:
         goals:
           type: integer
+          example: 10  # Example goals
         assists:
           type: integer
+          example: 5  # Example assists
         yellowCards:
           type: integer
+          example: 2  # Example yellow cards
         redCards:
           type: integer
+          example: 1  # Example red cards
 
     ClubStatistics:
       type: object
       properties:
         teamName:
           type: string
+          example: "FC Barcelona"  # Example team name
         matchesPlayed:
           type: integer
+          example: 38  # Example matches played
         goalsScored:
           type: integer
+          example: 90  # Example goals scored
         goalsConceded:
           type: integer
+          example: 30  # Example goals conceded
         winPercentage:
           type: number
           format: float
+          example: 0.75  # Example win percentage
