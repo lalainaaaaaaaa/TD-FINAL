@@ -76,5 +76,21 @@ public class Match {
     public void setMatchDate(String matchDate) {
         this.matchDate = matchDate;
     }
+
+    public int getHomeClubId() {
+        return 0;
+    }
+
+    public int getAwayClubId() {
+        return 0;
+    }
+
+    public int getHomeScore() {
+        return 0;
+    }
+
+    public int getAwayScore() {
+        return 0;
+    }
 }
 

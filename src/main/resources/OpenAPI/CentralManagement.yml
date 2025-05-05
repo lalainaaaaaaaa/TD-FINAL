@@ -1,0 +1,270 @@
+openapi: 3.0.0
+info:
+  title: FIFA Central API
+  description: API for managing FIFA data including clubs, coaches, championships, seasons, players, and matches.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local server
+
+paths:
+  /clubs:
+    get:
+      summary: Get all clubs
+      operationId: getAllClubs
+      tags:
+        - Clubs
+      responses:
+        '200':
+          description: List of all clubs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Club'
+    post:
+      summary: Add a new club
+      operationId: addClub
+      tags:
+        - Clubs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Club'
+      responses:
+        '200':
+          description: Club added successfully
+        '500':
+          description: Internal server error
+
+  /coaches:
+    post:
+      summary: Add a new coach
+      operationId: addCoach
+      tags:
+        - Coaches
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Coach'
+      responses:
+        '200':
+          description: Coach added successfully
+        '500':
+          description: Internal server error
+
+  /championships:
+    get:
+      summary: Get all championships
+      operationId: getAllChampionships
+      tags:
+        - Championships
+      responses:
+        '200':
+          description: List of all championships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Championship'
+    post:
+      summary: Add a new championship
+      operationId: addChampionship
+      tags:
+        - Championships
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Championship'
+      responses:
+        '200':
+          description: Championship added successfully
+        '500':
+          description: Internal server error
+
+  /seasons:
+    get:
+      summary: Get all seasons
+      operationId: getAllSeasons
+      tags:
+        - Seasons
+      responses:
+        '200':
+          description: List of all seasons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Season'
+    post:
+      summary: Add a new season
+      operationId: addSeason
+      tags:
+        - Seasons
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Season'
+      responses:
+        '200':
+          description: Season added successfully
+        '500':
+          description: Internal server error
+
+  /players:
+    post:
+      summary: Add a new player
+      operationId: addPlayer
+      tags:
+        - Players
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        '200':
+          description: Player added successfully
+        '500':
+          description: Internal server error
+
+  /matches:
+    get:
+      summary: Get all matches
+      operationId: getAllMatches
+      tags:
+        - Matches
+      responses:
+        '200':
+          description: List of all matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Match'
+    post:
+      summary: Add a new match
+      operationId: addMatch
+      tags:
+        - Matches
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Match'
+      responses:
+        '200':
+          description: Match added successfully
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Club:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the club
+        name:
+          type: string
+          description: The name of the club
+        stadium:
+          type: string
+          description: The stadium of the club
+        championship_id:
+          type: integer
+          description: The championship ID the club is participating in
+    Coach:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the coach
+        name:
+          type: string
+          description: The name of the coach
+        nationality:
+          type: string
+          description: The nationality of the coach
+        club_id:
+          type: integer
+          description: The club ID the coach is associated with
+    Championship:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the championship
+        name:
+          type: string
+          description: The name of the championship
+        country:
+          type: string
+          description: The country where the championship is held
+    Season:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the season
+        year:
+          type: string
+          description: The year of the season
+        championship_id:
+          type: integer
+          description: The ID of the championship associated with the season
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the player
+        name:
+          type: string
+          description: The name of the player
+        position:
+          type: string
+          description: The position of the player
+        nationality:
+          type: string
+          description: The nationality of the player
+        club_id:
+          type: integer
+          description: The club ID the player is associated with
+    Match:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the match
+        home_club_id:
+          type: integer
+          description: The home club ID
+        away_club_id:
+          type: integer
+          description: The away club ID
+        home_score:
+          type: integer
+          description: The home team's score
+        away_score:
+          type: integer
+          description: The away team's score
+        match_date:
+          type: string
+          format: date
+          description: The date of the match
