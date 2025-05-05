@@ -1,9 +1,9 @@
 FINAL PROJECT PROG3: STD23049 ~ STD23053
 
-Football Championship Management System
+FOOTBALL CHAMPIONSHIPS MANAGEMENT:
 The project involves developing a REST API for the Fédération Internationale de Football Association (FIFA) to track statistics for European soccer leagues. The aim is to facilitate the collection and analysis of data on teams, players and matches. The APIs enable the various leagues to record match statistics and FIFA to centralize this data to determine overall performance.
 
-Academic objectives
+ACADEMIC OBJECTIVES:
 The project aims to understand and illustrate the following concepts:
 -JDBC API: Using Java Database Connectivity to interact with a PostgreSQL database.
 -SQL queries with PostgreSQL: Executing queries to manipulate and retrieve data.
@@ -12,7 +12,7 @@ The project aims to understand and illustrate the following concepts:
 -REST API specification with OpenAPI (OAS): Document API endpoints to ensure clear, standardized use.
 -REST API implementation with Spring Boot: Create RESTful web services using the Spring Boot framework.
 
-Work to be carried out
+WORK TO BE CARRIED OUT:
 Implement the REST API for championship management:
 -Create endpoints to manage the following entities: championshisp, clubs, players, matches, and season.
 -Use JDBC to interact with the PostgreSQL database.
@@ -20,16 +20,16 @@ Implement the REST API for championship management:
 -Create endpoints to enable FIFA to retrieve global statistics: top leagues, teams, and players.
 -Use the Open API specification to document endpoints, specifying parameters and expected responses.
 
-Context
+CONTEXT:
 FIFA is the governing body of world soccer and would like to improve the monitoring of club competitions in Europe. The project focuses solely on club championships, excluding national teams. The key entities to be modeled include Clubs, Players, Cochs, and Matches, as well as the rules (Management) for determining rankings and champions.
 
-Rules
+RULES:
 Clubs vs. National Teams:
     -A club is a team that belongs to a league, not directly to a country.
     -A national team represents a country in international competitions (e.g., World Cup). Each country has only one national team.
 In this project, we focus only on club competitions, not international matches.
 
-Championships:
+*Championships:
   Each championship has several clubs, a name, and is linked to a European country.
   This project focuses on the five major European championships:
          Premier League (England)
@@ -38,31 +38,31 @@ Championships:
          Serie A (Italy)
          Ligue 1 (France)
 
-Clubs:
+*Clubs:
     A club has a unique name, creation year, acronym, stadium name, and belongs to a championship.
     A club consists of several players and exactly one coach.
 
-Players:
+*Players:
     A player has a name, a unique number within their club, a position (goalkeeper, defender, midfielder, forward), nationality, and age.
 
-Coach:
+*Coach:
     A coach has a name and nationality.
 
-Season:
+*Season:
     Each championship is played within a season (e.g., 2024-2025), and all championships share the same season period.
 
-Matches:
+*Matches:
     A match is a confrontation between two distinct clubs from the same championship, played at a specific date, time, and stadium, and belongs to a defined season.
     Each club plays all other clubs twice (home and away).
 
-Statistics:
+*Statistics:
     -Points: 3 for a win, 1 for a draw, 0 for a loss.
     -Collective stats: points, goals scored, goals conceded, goal difference, clean sheets.
     -Individual stats: goals per player, etc.
     -Standings are recalculated after each match.
 
 
-TECHNOLOGY USED
+TECHNOLOGY USED:
     -Java 17+: The project is built with Java 17 (see <java.version>17</java.version>).
     -Spring Boot 3: The project uses Spring Boot 3.4.5 as the main framework for building REST APIs.
     -Spring Boot Web Starter: For building RESTful web services (spring-boot-starter-web).
@@ -72,7 +72,7 @@ TECHNOLOGY USED
     -Mockito : For mocking dependencies in tests (mockito-core).
     -Maven : As the build and dependency management tool.
 
-REST API ENDPOINTS
+REST API ENDPOINTS:
   Championship API:
       Functionality:
 -GET /players: Retrieve player information,Filters: By club, name, or age range
@@ -92,18 +92,18 @@ REST API ENDPOINTS
 -POST /matches/{id}/goals: Record goals scored in a match
 -GET /clubs/statistics/{seasonYear}: Retrieve club statistics
 
-      Quality Code:
+      *Quality Code:
 -Adherence to SRP (Single Responsibility Principle)
 -Object-Oriented Programming (POO)
 -Proper use of Spring annotations-
 -No unauthorized libraries (e.g., JPA, YAML Processor)
 
    Central API:
-      Functionality:
+     *Functionality:
 -Retrieve championship and player rankings
 -Determine best players and clubs
 
-      Quality code:
+     *Quality code:
 -Adherence to SRP
 -POO principles
 -Use of Spring annotations
