@@ -1,15 +1,16 @@
 package edu.soccer.app.dao.service;
 
 import edu.soccer.app.dao.entity.championships;
+import edu.soccer.app.dao.entity.players;
 import edu.soccer.app.repository.championshipsRepository;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class championshipsService {
-    private final championshipsRepository championshipRepository;
+public abstract class championshipsService {
+    private championshipsRepository championshipRepository;
 
-    public championshipsService(championshipsRepository championshipRepository) {
+    public championshipsService() {
         this.championshipRepository = championshipRepository;
     }
 
@@ -31,4 +32,8 @@ public class championshipsService {
             throw new RuntimeException("Error saving championship", e);
         }
     }
+
+    public abstract String synchronize(String apiKey);
+
+    public abstract List<players> getBestPlayers();
 }

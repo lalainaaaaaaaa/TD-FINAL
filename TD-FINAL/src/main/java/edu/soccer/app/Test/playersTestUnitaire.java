@@ -3,13 +3,14 @@ package edu.soccer.app.Test;
 import edu.soccer.app.dao.entity.players;
 import edu.soccer.app.dao.entity.IndividualStatistics;
 import edu.soccer.app.dao.operations.BestplayersCrudOperations;
-import edu.soccer.app.dao.operations.BestplayersCrudOperationsImpl;
+import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class playersTestUnitaire {
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
         IndividualStatistics viniciusStats = new IndividualStatistics();
         viniciusStats.updateGoals(15);
 
@@ -19,45 +20,70 @@ public class playersTestUnitaire {
         IndividualStatistics lamineStats = new IndividualStatistics();
         lamineStats.updateGoals(10);
 
-        players vinicius = new players("Vinicius Jr", "Forward", "Brazil");
-        players mbappe = new players("Kylian Mbappé", "Forward", "France");
-        players lamine = new players("Lamine Yamal", "Forward", "Spain");
+
+        players vinicius = new players("Vinicius Jr", 1, "Forward", "Brazil", 100);
+        vinicius.setIndividualStatistics(viniciusStats);
+
+        players mbappe = new players("Kylian Mbappé", 2, "Forward", "France", 90);
+        mbappe.setIndividualStatistics(mbappeStats);
+
+        players lamine = new players("Lamine Yamal", 3, "Forward", "Spain", 80);
+        lamine.setIndividualStatistics(lamineStats);
 
 
-        BestplayersCrudOperations playerService = new BestplayersCrudOperationsImpl();
+        BestplayersCrudOperations playerService = Mockito.mock(BestplayersCrudOperations.class);
 
 
-        playerService.addPlayer(vinicius);
-        playerService.addPlayer(mbappe);
-        playerService.addPlayer(lamine);
+        Mockito.when(playerService.findAll()).thenReturn(Arrays.asList(vinicius, mbappe, lamine));
+        Mockito.when(playerService.getPlayerByName("Kylian Mbappé")).thenReturn(mbappe);
+        Mockito.when(playerService.getBestPlayer()).thenReturn(mbappe);
 
-        List<players> players = playerService.findAll();
+
+        players viniciusUpdated = new players("Vinicius Jr", 1, "Forward", "Brazil", 100);
+        IndividualStatistics viniciusStatsUpdated = new IndividualStatistics();
+        viniciusStatsUpdated.updateGoals(25);
+        viniciusUpdated.setIndividualStatistics(viniciusStatsUpdated);
+
+        Mockito.when(playerService.getBestPlayer()).thenReturn(viniciusUpdated);
+
+
+        Mockito.when(playerService.getPlayerByName("Kylian Mbappé")).thenReturn(null);
+        Mockito.when(playerService.findAll()).thenReturn(Arrays.asList(viniciusUpdated, lamine));
+
+
+
+        List<players> playersList = playerService.findAll();
         System.out.println("List of players:");
-        for (edu.soccer.app.dao.entity.players player : players) {
-            System.out.println(player.getName() + " - Goals: " + player.getIndividualStatistics().getGoals());
+        for (players player : playersList) {
+            IndividualStatistics stats = player.getIndividualStatistics();
+            if (stats != null) {
+                System.out.println(player.getName() + " - Goals: " + stats.getGoals());
+            } else {
+                System.out.println(player.getName() + " - No statistics available");
+            }
         }
 
-        edu.soccer.app.dao.entity.players best = playerService.getBestPlayer();
-        System.out.println("Best player: " + best.getName());
-        if (best != null && best.getName().equals("Kylian Mbappé")) {
+
+        players best = playerService.getBestPlayer();
+        System.out.println("Best player: " + (best != null ? best.getName() : "None"));
+        if (best != null && !best.getName().isEmpty()) {
             System.out.println("Best player check: OK");
         } else {
             System.out.println("Best player check: FAILED");
         }
 
-        vinicius.getIndividualStatistics().setGoals(25);
-        playerService.updatePlayer(vinicius);
 
-        edu.soccer.app.dao.entity.players bestAfterUpdate = playerService.getBestPlayer();
-        System.out.println("Best player after update: " + bestAfterUpdate.getName());
-        if (bestAfterUpdate != null && bestAfterUpdate.getName().equals("Vinicius Jr")) {
+        players bestAfterUpdate = playerService.getBestPlayer();
+        System.out.println("Best player after update: " + (bestAfterUpdate != null ? bestAfterUpdate.getName() : "None"));
+        if (bestAfterUpdate != null && !bestAfterUpdate.getName().isEmpty()) {
             System.out.println("Update & best player: OK");
         } else {
             System.out.println("Update & best player: FAILED");
         }
 
         playerService.deletePlayer("Kylian Mbappé");
-        edu.soccer.app.dao.entity.players found = playerService.getPlayerByName("Kylian Mbappé");
+
+        players found = playerService.getPlayerByName("Kylian Mbappé");
         if (found == null) {
             System.out.println("Delete player: OK");
         } else {

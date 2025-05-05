@@ -7,16 +7,15 @@ public class matches {
     private int homeScore;
     private int awayScore;
 
-    // Constructor to initialize the match with teams and season
+
     public matches(clubs homeTeam, clubs awayTeam, edu.soccer.app.dao.entity.season season) {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.season = season;
-        this.homeScore = 0;  // Default score
-        this.awayScore = 0;  // Default score
+        this.homeScore = 0;
+        this.awayScore = 0;
     }
 
-    // Getter and Setter methods
     public clubs getHomeTeam() {
         return homeTeam;
     }
@@ -57,7 +56,6 @@ public class matches {
         this.awayScore = awayScore;
     }
 
-    // Method to simulate the match by setting the scores
     public void play(int homeScore, int awayScore) {
         this.homeScore = homeScore;
         this.awayScore = awayScore;

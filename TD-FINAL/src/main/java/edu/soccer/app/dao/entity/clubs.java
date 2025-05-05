@@ -1,24 +1,34 @@
 package edu.soccer.app.dao.entity;
 
 public class clubs {
+    private int id;
     private String name;
-    private String stadium;               // Stadium name
-    private String acronym;               // Acronym (e.g., "RMA", "FCB")
-    private int yearFounded;              // Year founded
-    private int points;                   // Points for the current season
-    private CollectiveStatistics statistics; // Collective statistics
+    private String stadium;
+    private String acronym;
+    private int yearFounded;
+    private int points;
+    private CollectiveStatistics statistics;
 
-    // Main constructor
+
     public clubs(String name) {
+        this.id = id;
         this.name = name;
         this.stadium = "";
         this.acronym = "";
         this.yearFounded = 0;
-        this.points = 0; // Initialize to 0 at the start of the season
-        this.statistics = new CollectiveStatistics(); // Empty statistics at start
+        this.points = 0;
+        this.statistics = new CollectiveStatistics();
     }
 
-    // Getters and Setters
+     public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
     public String getName() {
         return name;
     }
@@ -70,7 +80,8 @@ public class clubs {
     @Override
     public String toString() {
         return "Team{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", stadium='" + stadium + '\'' +
                 ", acronym='" + acronym + '\'' +
                 ", yearFounded=" + yearFounded +

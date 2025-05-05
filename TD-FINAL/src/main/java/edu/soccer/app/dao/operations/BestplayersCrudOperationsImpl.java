@@ -1,23 +1,24 @@
 package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.Bestplayers;
+import edu.soccer.app.dao.entity.players;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BestplayersCrudOperationsImpl implements BestplayersCrudOperations {
 
-    private static List<edu.soccer.app.dao.entity.players> players = new ArrayList<>();
+    private static List<players> players = new ArrayList<>();
 
     @Override
-    public void addPlayer(edu.soccer.app.dao.entity.players player) {
+    public void addPlayer(players player) {
         players.add(player);
     }
 
     @Override
-    public edu.soccer.app.dao.entity.players getPlayerByName(String name) {
-        for (edu.soccer.app.dao.entity.players player : players) {
-            if (player.getName().equalsIgnoreCase(name)) {
+    public players getPlayerByName(String name) {
+        for (players player : players) {
+            if (player.getName().equals(name)) {
                 return player;
             }
         }
@@ -25,8 +26,8 @@ public class BestplayersCrudOperationsImpl implements BestplayersCrudOperations 
     }
 
     @Override
-    public void updatePlayer(edu.soccer.app.dao.entity.players updatedPlayer) {
-        edu.soccer.app.dao.entity.players existingPlayer = getPlayerByName(updatedPlayer.getName());
+    public void updatePlayer(players updatedPlayer) {
+        players existingPlayer = getPlayerByName(updatedPlayer.getName());
         if (existingPlayer != null) {
             existingPlayer.updatePosition(updatedPlayer.getPosition());
             existingPlayer.updateNationality(updatedPlayer.getNationality());
@@ -39,16 +40,16 @@ public class BestplayersCrudOperationsImpl implements BestplayersCrudOperations 
 
     @Override
     public void deletePlayer(String name) {
-        players.removeIf(player -> player.getName().equalsIgnoreCase(name));
+        players.removeIf(player -> player.getName().equals(name));
     }
 
     @Override
-    public edu.soccer.app.dao.entity.players getBestPlayer() {
+    public players getBestPlayer() {
         return Bestplayers.bestPlayer(players);
     }
 
     @Override
-    public List<edu.soccer.app.dao.entity.players> findAll() {
+    public List<players> findAll() {
         return new ArrayList<>(players);
     }
 }

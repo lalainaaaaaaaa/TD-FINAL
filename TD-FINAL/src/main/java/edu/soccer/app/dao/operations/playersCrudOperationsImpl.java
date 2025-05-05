@@ -1,12 +1,11 @@
 package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.players;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class playersCrudOperationsImpl implements playersCrudOperations {
-    private List<edu.soccer.app.dao.entity.players> players = new ArrayList<>();
+    private List<players> players = new ArrayList<>();
 
     public playersCrudOperationsImpl() {
         players.add(new players("Lionel Messi", 10, "Forward", "Argentina", 36));
@@ -15,8 +14,8 @@ public class playersCrudOperationsImpl implements playersCrudOperations {
     }
 
     @Override
-    public edu.soccer.app.dao.entity.players getPlayerByNumber(int number) {
-        for (edu.soccer.app.dao.entity.players player : players) {
+    public players getPlayerByNumber(int number) {
+        for (players player : players) {
             if (player.getNumber() == number) {
                 return player;
             }
@@ -25,21 +24,21 @@ public class playersCrudOperationsImpl implements playersCrudOperations {
     }
 
     @Override
-    public List<edu.soccer.app.dao.entity.players> findAll() {
+    public List<players> findAll() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public void addPlayer(edu.soccer.app.dao.entity.players player) {
-        if (player.getName() == null || player.getName().isEmpty()) {
+    public void addPlayer(players player) {
+        if (player.getName() == null || player.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Player name cannot be null or empty.");
         }
         players.add(player);
     }
 
     @Override
-    public void updatePlayer(edu.soccer.app.dao.entity.players updatedPlayer) {
-        edu.soccer.app.dao.entity.players existingPlayer = getPlayerByNumber(updatedPlayer.getNumber());
+    public void updatePlayer(players updatedPlayer) {
+        players existingPlayer = getPlayerByNumber(updatedPlayer.getNumber());
         if (existingPlayer != null) {
             existingPlayer.updatePosition(updatedPlayer.getPosition());
             existingPlayer.updateNationality(updatedPlayer.getNationality());

@@ -6,11 +6,15 @@ import edu.soccer.app.repository.playersRepository;
 import java.sql.SQLException;
 import java.util.List;
 
-public class playersService {
-    private final playersRepository playerRepository;
+public abstract class playersService {
+    private playersRepository playerRepository;
 
-    public playersService(playersRepository playerRepository) {
+    public playersService() {
         this.playerRepository = playerRepository;
+    }
+
+    public static List<players> getBestplayers(int top, String playingTimeUnit) {
+        return null;
     }
 
     public List<players> findAll() {
@@ -31,4 +35,6 @@ public class playersService {
             throw new RuntimeException("Error saving player", e);
         }
     }
+
+    public abstract List<players> getBestPlayers(int top, String playingTimeUnit);
 }

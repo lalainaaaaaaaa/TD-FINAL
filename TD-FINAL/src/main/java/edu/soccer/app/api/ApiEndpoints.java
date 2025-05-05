@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class ApiEndpoints {
 
-    private List<players> playersList = new ArrayList<>(); // Simule une base de données temporaire
-    private List<matches> matchesList = new ArrayList<>();   // Simule une base de données pour les matches
-    private List<season> seasonsList = new ArrayList<>();   // Simule une base de données pour les saisons
-    private List<clubs> clubsList = new ArrayList<>();       // Simule une base de données pour les clubs
+    private List<players> playersList = new ArrayList<>();
+    private List<matches> matchesList = new ArrayList<>();
+    private List<season> seasonsList = new ArrayList<>();
+    private List<clubs> clubsList = new ArrayList<>();
 
     // Récupérer tous les joueurs avec filtrage
     @GetMapping("/players")
@@ -27,121 +27,134 @@ public class ApiEndpoints {
                                        @RequestParam(required = false) Integer ageMin,
                                        @RequestParam(required = false) Integer ageMax) {
         return playersList.stream()
-                .filter(player -> (club == null || player.getClub().equals(club)) &&
-                        (name == null || player.getName().contains(name)) &&
-                        (ageMin == null || player.getAge() >= ageMin) &&
-                        (ageMax == null || player.getAge() <= ageMax))
+                .filter(player -> {
+                    if (club == null) return true;
+                    if (player.getClub() == null) return false;
+                    try {
+                        int clubIdParam = Integer.parseInt(club);
+                        return player.getClub().getId() == clubIdParam;
+                    } catch (NumberFormatException e) {
+                        // Si le paramètre club n'est pas un nombre valide, on exclut le joueur
+                        return false;
+                    }
+                })
+                .filter(player -> name == null || (player.getName() != null && player.getName().contains(name)))
+                .filter(player -> ageMin == null || player.getAge() >= ageMin)
+                .filter(player -> ageMax == null || player.getAge() <= ageMax)
                 .collect(Collectors.toList());
     }
 
     // Ajouter un nouveau joueur
     @PostMapping("/players")
     public players addPlayer(@RequestBody players player) {
-        playersList.add(player); // Ajoute un joueur à la liste
-        return player; // Retourne le joueur ajouté
+        playersList.add(player);
+        return player;
     }
 
     // Mettre à jour un joueur
     @PutMapping("/players/{id}")
     public players updatePlayer(@PathVariable String id, @RequestBody players updatedPlayer) {
-        playersList.removeIf(p -> p.getId().equals(id));
-        playersList.add(updatedPlayer); // Ajoute le joueur mis à jour
-        return updatedPlayer; // Retourne le joueur mis à jour
+        int playerId;
+        try {
+            playerId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid player id: " + id);
+        }
+        playersList.removeIf(p -> p.getId() == playerId);
+        playersList.add(updatedPlayer);
+        return updatedPlayer;
     }
 
     // Récupérer toutes les saisons
     @GetMapping("/seasons")
     public List<season> getAllSeasons() {
-        return seasonsList; // Retourne toutes les saisons
+        return seasonsList;
     }
 
     // Ajouter une nouvelle saison
     @PostMapping("/seasons")
     public season addSeason(@RequestBody season season) {
-        seasonsList.add(season); // Ajoute une saison à la liste
-        return season; // Retourne la saison ajoutée
+        seasonsList.add(season);
+        return season;
     }
 
     // Mettre à jour le statut d'une saison
     @PutMapping("/seasons/{seasonYear}/status")
     public String updateSeasonStatus(@PathVariable int seasonYear, @RequestBody String status) {
-        // Implémentez la logique pour mettre à jour le statut d'une saison
         return "Season " + seasonYear + " status updated to " + status;
     }
 
     // Récupérer les statistiques d'un joueur pour une saison donnée
     @GetMapping("/players/{id}/statistics/{seasonYear}")
     public IndividualStatistics getPlayerStatistics(@PathVariable String id, @PathVariable int seasonYear) {
-        // Implémentez la logique pour récupérer les statistiques d'un joueur
-        return new IndividualStatistics(); // Retourne des statistiques par défaut pour l'instant
+        return new IndividualStatistics();
     }
 
     // Récupérer tous les clubs
     @GetMapping("/clubs")
     public List<clubs> getAllClubs() {
-        return clubsList; // Retourne tous les clubs
+        return clubsList;
     }
 
     // Mettre à jour un club
     @PutMapping("/clubs")
     public clubs updateClub(@RequestBody clubs club) {
-        // Implémentez la logique pour mettre à jour un club
-        return club; // Retourne le club mis à jour
+        return club;
     }
 
     // Récupérer tous les joueurs d'un club
     @GetMapping("/clubs/{id}/players")
     public List<players> getPlayersByClub(@PathVariable String id) {
-        // Implémentez la logique pour récupérer les joueurs d'un club
-        return new ArrayList<>(); // Retourne une liste vide pour l'instant
+        int clubId;
+        try {
+            clubId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            return new ArrayList<>(); // id invalide, retourne liste vide
+        }
+        return playersList.stream()
+                .filter(player -> player.getClub() != null && player.getClub().getId() == clubId)
+                .collect(Collectors.toList());
     }
 
     // Mettre à jour les joueurs d'un club
     @PutMapping("/clubs/{id}/players")
     public String updateClubPlayers(@PathVariable String id, @RequestBody List<String> playerIds) {
-        // Implémentez la logique pour mettre à jour les joueurs d'un club
         return "Club " + id + " players updated.";
     }
 
     // Ajouter un joueur à un club
     @PostMapping("/clubs/{id}/players")
     public String addPlayerToClub(@PathVariable String id, @RequestBody String playerId) {
-        // Implémentez la logique pour ajouter un joueur à un club
         return "Player " + playerId + " added to club " + id;
     }
 
     // Générer des matches pour une saison donnée
     @PostMapping("/matchMaker/{seasonYear}")
     public String generateMatches(@PathVariable int seasonYear) {
-        // Implémentez la logique pour générer des matches pour une saison
         return "Matches generated for season " + seasonYear;
     }
 
     // Récupérer tous les matches d'une saison
     @GetMapping("/matches/{seasonYear}")
     public List<matches> getMatchesBySeason(@PathVariable int seasonYear) {
-        // Implémentez la logique pour récupérer les matches d'une saison
-        return new ArrayList<>(); // Retourne une liste vide pour l'instant
+        return new ArrayList<>();
     }
 
     // Mettre à jour le statut d'un match
     @PutMapping("/matches/{id}/status")
     public String updateMatchStatus(@PathVariable String id, @RequestBody String status) {
-        // Implémentez la logique pour mettre à jour le statut d'un match
         return "Match " + id + " status updated to " + status;
     }
 
     // Mettre à jour les buts d'un match
     @PostMapping("/matches/{id}/goals")
     public String updateMatchGoals(@PathVariable String id, @RequestBody String goals) {
-        // Implémentez la logique pour mettre à jour les buts d'un match
         return "Goals for match " + id + " updated to " + goals;
     }
 
     // Récupérer les statistiques d'un club pour une saison donnée
     @GetMapping("/clubs/statistics/{seasonYear}")
     public CollectiveStatistics getClubStatistics(@PathVariable int seasonYear) {
-        // Implémentez la logique pour récupérer les statistiques d'un club
-        return new CollectiveStatistics(); // Retourne des statistiques par défaut pour l'instant
+        return new CollectiveStatistics();
     }
 }

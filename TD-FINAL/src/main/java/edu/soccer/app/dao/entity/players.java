@@ -1,41 +1,48 @@
 package edu.soccer.app.dao.entity;
 
 public class players {
-    private String id;
     private String name;
     private int number;
     private String position;
     private String nationality;
     private int age;
-    private clubs club; // Référence au club
+
     private IndividualStatistics individualStatistics;
 
-    public players(String id, String name, int number, String position, String nationality, int age, clubs club, IndividualStatistics individualStatistics) {
-        this.id = id;
+    private clubs club;
+
+    public players(String name, int number, String position, String nationality, int age) {
         this.name = name;
         this.number = number;
         this.position = position;
         this.nationality = nationality;
         this.age = age;
-        this.club = club;
-        this.individualStatistics = individualStatistics;
+        this.individualStatistics = new IndividualStatistics();
     }
 
-    // Getters et Setters
-    public String getId() {
-        return id;
+
+    public clubs getClub() {
+        return club;
+    }
+
+    public void setClub(clubs club) {
+        this.club = club;
     }
 
     public String getName() {
         return name;
     }
 
+    public String getPosition() {
+        return position;
+    }
+
     public int getNumber() {
         return number;
     }
 
-    public String getPosition() {
-        return position;
+    public Integer getId() {
+        return number;
     }
 
     public String getNationality() {
@@ -46,24 +53,23 @@ public class players {
         return age;
     }
 
-    public clubs getClub() { // Méthode pour accéder à l'attribut club
-        return club;
-    }
-
     public IndividualStatistics getIndividualStatistics() {
         return individualStatistics;
     }
 
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", number=" + number +
-                ", position='" + position + '\'' +
-                ", nationality='" + nationality + '\'' +
-                ", age=" + age +
-                ", club=" + (club != null ? club.getName() : "None") +
-                '}';
+    public void setIndividualStatistics(IndividualStatistics stats) {
+        this.individualStatistics = stats;
+    }
+
+    public void updatePosition(String position) {
+        this.position = position;
+    }
+
+    public void updateNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public void updateAge(int age) {
+        this.age = age;
     }
 }

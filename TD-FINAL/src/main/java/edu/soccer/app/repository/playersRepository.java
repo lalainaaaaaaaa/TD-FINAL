@@ -36,7 +36,7 @@ public class playersRepository {
         }
         String sql = "INSERT INTO Player (name, number, position, nationality, age) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, player.getName());
+            pstmt.setString(1, String.valueOf(player.getName()));
             pstmt.setInt(2, player.getNumber());
             pstmt.setString(3, player.getPosition());
             pstmt.setString(4, player.getNationality());

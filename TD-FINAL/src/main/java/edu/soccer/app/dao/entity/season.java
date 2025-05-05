@@ -5,13 +5,13 @@ import java.util.List;
 
 public class season {
     private final int year;
-    private int label;  // Use this for a label like "2024-2025"
+    private int label;
     private final List<edu.soccer.app.dao.entity.matches> matches;
     private final List<clubs> standings;
 
     public season(int year) {
         this.year = year;
-        this.label = year;  // Initialize label with the year
+        this.label = year;
         this.matches = new ArrayList<>();
         this.standings = new ArrayList<>();
     }

@@ -7,49 +7,67 @@ import edu.soccer.app.dao.operations.BestclubsCrudOperationsImpl;
 import java.util.List;
 
 public class clubsTest {
+
     public static void main(String[] args) {
+        BestclubsCrudOperations teamService = new BestclubsCrudOperationsImpl();
+
         clubs real = new clubs("Real Madrid FC");
         real.setPoints(10);
-
-        clubs barca = new clubs("FC Barcelona");
+        clubs barca = new clubs("FC Barcelone");
         barca.setPoints(12);
 
-        BestclubsCrudOperations teamService = new BestclubsCrudOperationsImpl();
 
         teamService.addTeam(real);
         teamService.addTeam(barca);
 
-        System.out.println("Teams:");
+
         List<clubs> teams = teamService.findAll();
-        for (clubs t : teams) {
-            System.out.println("Name: " + t.getName() + ", Points: " + t.getPoints());
-        }
-
-        real.setPoints(15);
-        teamService.updateTeam(real);
-
-        System.out.println("After updating Real Madrid points:");
-        clubs updatedReal = teamService.getTeamByName("Real Madrid FC");
-        if (updatedReal != null) {
-            System.out.println("Name: " + updatedReal.getName() + ", Points: " + updatedReal.getPoints());
+        System.out.println("Teams after add:");
+        teams.forEach(System.out::println);
+        if (teams.size() == 2 && teams.contains(real) && teams.contains(barca)) {
+            System.out.println("Add and findAll: OK");
         } else {
-            System.out.println("Real Madrid FC not found.");
+            System.out.println("Add and findAll: FAILED");
         }
 
-        teamService.deleteTeam("FC Barcelona");
 
-        System.out.println("Teams after deleting Barcelona:");
+        clubs updatedReal = new clubs("Real Madrid FC");
+        updatedReal.setPoints(15);
+        teamService.updateTeam(updatedReal);
+
+        clubs foundReal = teamService.getTeamByName("Real Madrid FC");
+        System.out.println("Updated Real: " + foundReal);
+        if (foundReal != null && foundReal.getPoints() == 15) {
+            System.out.println("Update team: OK");
+        } else {
+            System.out.println("Update team: FAILED");
+        }
+
+
+        teamService.deleteTeam("FC Barcelone");
         teams = teamService.findAll();
+        boolean barcaDeleted = true;
         for (clubs t : teams) {
-            System.out.println("Name: " + t.getName() + ", Points: " + t.getPoints());
+            if (t.getName().equals("FC Barcelone")) {
+                barcaDeleted = false;
+                break;
+            }
         }
+        System.out.println("Teams after delete:");
+        teams.forEach(System.out::println);
+        if (barcaDeleted) {
+            System.out.println("Delete team: OK");
+        } else {
+            System.out.println("Delete team: FAILED");
+        }
+
 
         clubs best = teamService.getBestTeam();
-        System.out.println("Best team:");
-        if (best != null) {
-            System.out.println("Name: " + best.getName() + ", Points: " + best.getPoints());
+        System.out.println("Best team: " + best);
+        if (best != null && best.getName().equals("Real Madrid FC")) {
+            System.out.println("Best team check: OK");
         } else {
-            System.out.println("No teams available.");
+            System.out.println("Best team check: FAILED");
         }
     }
 }

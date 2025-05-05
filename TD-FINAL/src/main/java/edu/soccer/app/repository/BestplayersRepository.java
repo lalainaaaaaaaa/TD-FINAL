@@ -40,7 +40,7 @@ public class BestplayersRepository {
                 stats.updateGoals(goalsScored);
                 stats.updatePlayingTime(playingTime);
 
-                edu.soccer.app.dao.entity.players player = new players(name, position, nationality);
+                edu.soccer.app.dao.entity.players player = new players(name, rs.getInt("number"), position, nationality, rs.getInt("age"));
                 players.add(player);
             }
         }
