@@ -13,32 +13,32 @@ paths:
       parameters:
         - name: club
           in: query
-          description: Filter players by club name
+          description: Filter players by club ID
           required: false
           schema:
             type: string
-            example: "FC Barcelona"  
+            example: "1"
         - name: name
           in: query
           description: Filter players by name
           required: false
           schema:
             type: string
-            example: "Lionel Messi"  
+            example: "Lionel Messi"
         - name: ageMin
           in: query
           description: Minimum age filter
           required: false
           schema:
             type: integer
-            example: 18 
+            example: 18
         - name: ageMax
           in: query
           description: Maximum age filter
           required: false
           schema:
             type: integer
-            example: 40  
+            example: 40
       responses:
         '200':
           description: List of players
@@ -50,36 +50,57 @@ paths:
                   $ref: '#/components/schemas/Player'
         '500':
           description: Internal server error
-    put:
-      summary: Update a player
+    post:
+      summary: Add a new player
       parameters:
-        - name: id
+        - name: clubId
           in: query
-          description: ID of the player to update
+          description: ID of the club the player belongs to
           required: true
           schema:
             type: string
-            example: "1" 
-        - name: notify
-          in: query
-          description: Whether to notify the player about the update
-          required: false
-          schema:
-            type: boolean
-            example: true  
+            example: "1"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlayerUpdate'
+              type: object
+              required:
+                - name
+                - number
+                - age
+                - position
+                - nationality
+                - status
+              properties:
+                name:
+                  type: string
+                  example: "Lionel Messi"
+                number:
+                  type: integer
+                  example: 10
+                age:
+                  type: integer
+                  example: 34
+                position:
+                  type: string
+                  example: "Forward"
+                nationality:
+                  type: string
+                  example: "Argentinian"
+                status:
+                  type: string
+                  example: "ACTIVE"  # Status of the player (ACTIVE, INJURED, etc.)
       responses:
-        '200':
-          description: Player updated successfully
+        '201':
+          description: Player created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
         '400':
           description: Invalid data
-        '404':
-          description: Player not found
         '500':
           description: Internal server error
 
@@ -89,11 +110,11 @@ paths:
       parameters:
         - name: includeInactive
           in: query
-          description: Whether to include inactive seasons
+          description: Include inactive seasons in the response
           required: false
           schema:
             type: boolean
-            example: false  
+            example: false
       responses:
         '200':
           description: List of seasons
@@ -110,17 +131,37 @@ paths:
       parameters:
         - name: notifyTeams
           in: query
-          description: Whether to notify all teams about the new season
+          description: Whether to notify teams about the new season
           required: false
           schema:
             type: boolean
-            example: true  
+            example: true
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Season'
+              type: object
+              required:
+                - name
+                - startDate
+                - endDate
+                - status
+              properties:
+                name:
+                  type: string
+                  example: "Season 2024-2025"
+                startDate:
+                  type: string
+                  format: date
+                  example: "2024-09-01"
+                endDate:
+                  type: string
+                  format: date
+                  example: "2025-06-30"
+                status:
+                  type: string
+                  example: "ACTIVE"  # Current status of the season (ACTIVE, INACTIVE)
       responses:
         '201':
           description: Season created successfully
@@ -133,36 +174,6 @@ paths:
         '500':
           description: Internal server error
 
-  /seasons/{seasonYear}/status:
-    put:
-      summary: Update the status of a season
-      parameters:
-        - name: seasonYear
-          in: path
-          required: true
-          schema:
-            type: string
-            example: "2024"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - status
-              properties:
-                status:
-                  type: string
-                  example: "FINISHED" 
-      responses:
-        '200':
-          description: Season status updated successfully
-        '404':
-          description: Season not found
-        '400':
-          description: Invalid data
-
   /clubs:
     get:
       summary: Retrieve all clubs
@@ -173,28 +184,14 @@ paths:
           required: false
           schema:
             type: string
-            example: "Madrid"  
-        - name: name
-          in: query
-          description: Filter clubs by name
-          required: false
-          schema:
-            type: string
-            example: "FC Barcelona"  
+            example: "Barcelona"
         - name: active
           in: query
-          description: Filter clubs by their activity status (active or inactive)
+          description: Filter clubs by their activity status
           required: false
           schema:
             type: boolean
-            example: true  
-        - name: minPlayers
-          in: query
-          description: Filter clubs by minimum number of players
-          required: false
-          schema:
-            type: integer
-            example: 11 
+            example: true
       responses:
         '200':
           description: List of clubs
@@ -206,23 +203,78 @@ paths:
                   $ref: '#/components/schemas/Club'
         '500':
           description: Internal server error
+    post:
+      summary: Add a new club
+      parameters:
+        - name: homeClub
+          in: query
+          description: Home club for the new club
+          required: false
+          schema:
+            type: string
+            example: "Home Club"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - acronym
+                - yearFounded
+                - stadium
+                - coach
+                - nationality
+                - status
+              properties:
+                name:
+                  type: string
+                  example: "FC Barcelona"
+                acronym:
+                  type: string
+                  example: "FCB"
+                yearFounded:
+                  type: integer
+                  example: 1899
+                stadium:
+                  type: string
+                  example: "Camp Nou"
+                coach:
+                  type: string
+                  example: "Xavi Hernandez"
+                nationality:
+                  type: string
+                  example: "Spanish"
+                awayClub:
+                  type: string
+                  example: "Away Club"
+                status:
+                  type: string
+                  example: "ACTIVE"  # Current status of the club (ACTIVE, INACTIVE)
+      responses:
+        '201':
+          description: Club created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal server error
+
+  /clubs/{id}:
     put:
       summary: Update a club
       parameters:
         - name: id
-          in: query
+          in: path
           description: ID of the club to update
           required: true
           schema:
             type: string
             example: "1"
-        - name: notifyPlayers
-          in: query
-          description: Whether to notify all players in the club about the update
-          required: false
-          schema:
-            type: boolean
-            example: true 
       requestBody:
         required: true
         content:
@@ -239,34 +291,6 @@ paths:
         '500':
           description: Internal server error
 
-  /players/{id}/statistics/{seasonYear}:
-    get:
-      summary: Retrieve statistics for a player in a given season
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            example: "1"  
-        - name: seasonYear
-          in: path
-          required: true
-          schema:
-            type: string
-            example: "2024"  
-      responses:
-        '200':
-          description: Player statistics retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Statistics'
-        '404':
-          description: Player or season not found
-        '500':
-          description: Internal server error
-
   /clubs/{id}/players:
     get:
       summary: Retrieve all players for a specific club
@@ -276,7 +300,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "2"  
+            example: "2"
       responses:
         '200':
           description: List of players in the club
@@ -300,7 +324,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "2024" 
+            example: "2024"
       responses:
         '200':
           description: Club statistics retrieved successfully
@@ -330,19 +354,22 @@ components:
           type: string
         name:
           type: string
-          example: "Lionel Messi"  
+          example: "Lionel Messi"
         number:
           type: integer
-          example: 10 
+          example: 10
         position:
           type: string
-          example: "Forward"  
+          example: "Forward"
         nationality:
           type: string
-          example: "Argentinian"  
+          example: "Argentinian"
         age:
           type: integer
-          example: 34 
+          example: 34
+        status:
+          type: string
+          example: "ACTIVE"  # Status of the player
 
     PlayerUpdate:
       type: object
@@ -371,9 +398,30 @@ components:
         name:
           type: string
           example: "FC Barcelona"
-        city:
+        acronym:
           type: string
-          example: "Barcelona"  
+          example: "FCB"
+        yearFounded:
+          type: integer
+          example: 1899
+        stadium:
+          type: string
+          example: "Camp Nou"
+        coach:
+          type: string
+          example: "Xavi Hernandez"
+        nationality:
+          type: string
+          example: "Spanish"
+        homeClub:
+          type: string
+          example: "Home Club"
+        awayClub:
+          type: string
+          example: "Away Club"
+        status:
+          type: string
+          example: "ACTIVE"  # Status of the club
 
     Season:
       type: object
@@ -381,56 +429,43 @@ components:
         - name
         - startDate
         - endDate
+        - status
       properties:
         id:
           type: string
         name:
           type: string
-          example: "Season 2024-2025" 
+          example: "Season 2024-2025"
         startDate:
           type: string
           format: date
-          example: "2024-09-01" 
+          example: "2024-09-01"
         endDate:
           type: string
           format: date
-          example: "2025-06-30"  
-
-    Match:
-      type: object
-      properties:
-        id:
-          type: string
-          example: "match_001"  
-        homeTeam:
-          type: string
-          example: "Real Madrid"  
-        awayTeam:
-          type: string
-          example: "FC Barcelona"
-        date:
-          type: string
-          format: date-time
-          example: "2025-05-01T21:00:00Z" 
+          example: "2025-06-30"
+        notifyTeams:
+          type: boolean
+          example: true  # Whether to notify all teams about the new season
         status:
           type: string
-          example: "Scheduled" 
+          example: "ACTIVE"  # Current status of the season
 
-    Statistics:
+    IndividualStatistics:
       type: object
       properties:
         goals:
           type: integer
-          example: 10 
+          example: 10
         assists:
           type: integer
-          example: 5  
+          example: 5
         yellowCards:
           type: integer
-          example: 2  
+          example: 2
         redCards:
           type: integer
-          example: 1  
+          example: 1
 
     ClubStatistics:
       type: object
@@ -440,14 +475,14 @@ components:
           example: "FC Barcelona"
         matchesPlayed:
           type: integer
-          example: 38 
+          example: 38
         goalsScored:
           type: integer
-          example: 90  
+          example: 90
         goalsConceded:
           type: integer
-          example: 30  
+          example: 30
         winPercentage:
           type: number
           format: float
-          example: 0.75  # Example win percentage
+          example: 0.75
