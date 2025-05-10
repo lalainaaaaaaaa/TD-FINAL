@@ -36,4 +36,8 @@ public class Championship {
     public void setCountry(String country) {
         this.country = country;
     }
+
+    public Integer getYear() {
+        return getYear();
+    }
 }

@@ -46,5 +46,8 @@ public class Club {
     public void setChampionshipId(int championshipId) {
         this.championshipId = championshipId;
     }
-}
 
+    public String getLocation() {
+        return getLocation();
+    }
+}

@@ -66,5 +66,12 @@ public class Player {
     public void setClubId(int clubId) {
         this.clubId = clubId;
     }
-}
 
+    public String getTeam() {
+        return position;
+    }
+
+    public String getPlayingTimeUnit() {
+        return null;
+    }
+}

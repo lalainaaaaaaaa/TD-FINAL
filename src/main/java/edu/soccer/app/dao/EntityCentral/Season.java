@@ -37,4 +37,3 @@ public class Season {
         this.championshipId = championshipId;
     }
 }
-

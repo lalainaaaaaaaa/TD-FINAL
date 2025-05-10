@@ -92,5 +92,8 @@ public class Match {
     public int getAwayScore() {
         return 0;
     }
-}
 
+    public Object getDate() {
+        return getDate();
+    }
+}
