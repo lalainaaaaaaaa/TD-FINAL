@@ -1,18 +1,14 @@
 package edu.soccer.app.dao.operations;
 
-import edu.soccer.app.dao.entity.clubs;
 import java.util.List;
 
-public interface BestclubsCrudOperations {
-    void addTeam(clubs team);
-
-    clubs getTeamByName(String name);
-
-    void updateTeam(clubs updatedTeam);
-
-    void deleteTeam(String name);
-
-    clubs getBestTeam();
-
-    List<clubs> findAll();
+public interface BestclubsCrudOperations<T> {
+    List<T> getAll(int page, int size);
+    T findById(Long id);
+    List<T> saveAll(List<T> entities);
+    T create(T entity);
+    T read(int id);
+    List<T> readAll();
+    T update(T entity);
+    boolean delete(int id);
 }

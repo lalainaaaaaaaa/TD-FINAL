@@ -1,47 +1,55 @@
 package edu.soccer.app.dao.operations;
 
+import edu.soccer.app.dao.entity.matches;
 import edu.soccer.app.dao.entity.clubs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class matchesCrudOperationsImpl implements matchesCrudOperations {
-    private List<edu.soccer.app.dao.entity.matches> matches = new ArrayList<>();
+
+    private final List<matches> matchesList = new ArrayList<>();
 
     @Override
-    public void addMatch(edu.soccer.app.dao.entity.matches match) {
-        matches.add(match);
-    }
-
-    @Override
-    public List<edu.soccer.app.dao.entity.matches> findAll() {
-        return new ArrayList<>(matches);
-    }
-
-    @Override
-    public edu.soccer.app.dao.entity.matches findMatch(clubs homeTeam, clubs awayTeam) {
-        for (edu.soccer.app.dao.entity.matches match : matches) {
-            if (match.getHomeTeam().equals(homeTeam) && match.getAwayTeam().equals(awayTeam)) {
-                return match;
-            }
+    public void addMatch(matches match) {
+        if (match != null) {
+            matchesList.add(match);
         }
-        return null;
     }
 
     @Override
-    public void updateMatch(edu.soccer.app.dao.entity.matches updatedMatch) {
-        edu.soccer.app.dao.entity.matches existingMatch = findMatch(updatedMatch.getHomeTeam(), updatedMatch.getAwayTeam());
-        if (existingMatch != null) {
-            existingMatch.play(updatedMatch.getHomeScore(), updatedMatch.getAwayScore());
-        } else {
-            throw new IllegalArgumentException("Match not found for the given teams.");
+    public List<matches> findAll() {
+        return new ArrayList<>(matchesList);
+    }
+
+    @Override
+    public matches findMatch(clubs homeTeam, clubs awayTeam) {
+        if (homeTeam == null || awayTeam == null) {
+            return null;
+        }
+        Optional<matches> match = matchesList.stream()
+                .filter(m -> m.getHomeTeam().equals(homeTeam) && m.getAwayTeam().equals(awayTeam))
+                .findFirst();
+        return match.orElse(null);
+    }
+
+    @Override
+    public void updateMatch(matches updatedMatch) {
+        if (updatedMatch == null) return;
+        for (int i = 0; i < matchesList.size(); i++) {
+            matches current = matchesList.get(i);
+            if (current.getHomeTeam().equals(updatedMatch.getHomeTeam()) &&
+                    current.getAwayTeam().equals(updatedMatch.getAwayTeam())) {
+                matchesList.set(i, updatedMatch);
+                return;
+            }
         }
     }
 
     @Override
     public void deleteMatch(clubs homeTeam, clubs awayTeam) {
-        if (!matches.removeIf(match -> match.getHomeTeam().equals(homeTeam) && match.getAwayTeam().equals(awayTeam))) {
-            throw new IllegalArgumentException("Match not found for the given teams.");
-        }
+        if (homeTeam == null || awayTeam == null) return;
+        matchesList.removeIf(m -> m.getHomeTeam().equals(homeTeam) && m.getAwayTeam().equals(awayTeam));
     }
 }

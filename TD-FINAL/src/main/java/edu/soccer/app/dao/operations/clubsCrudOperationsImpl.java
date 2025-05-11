@@ -1,24 +1,26 @@
 package edu.soccer.app.dao.operations;
 
 import edu.soccer.app.dao.entity.clubs;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class clubsCrudOperationsImpl implements clubsCrudOperations {
 
-    private List<clubs> clubList = new ArrayList<>();
+    private final List<clubs> clubsList = new ArrayList<>();
 
     @Override
     public void addTeam(clubs club) {
-        clubList.add(club);
+        clubsList.add(club);
     }
 
     @Override
     public void updateTeam(clubs club) {
-        for (int i = 0; i < clubList.size(); i++) {
-            clubs c = clubList.get(i);
-            if (c.getId() == club.getId()) {
-                clubList.set(i, club);
+        if (club == null || club.getName() == null) return;
+        for (int i = 0; i < clubsList.size(); i++) {
+            if (clubsList.get(i).getName().equalsIgnoreCase(club.getName())) {
+                clubsList.set(i, club);
                 return;
             }
         }
@@ -26,47 +28,40 @@ public class clubsCrudOperationsImpl implements clubsCrudOperations {
 
     @Override
     public void deleteTeam(String name) {
-        for (int i = 0; i < clubList.size(); i++) {
-            clubs c = clubList.get(i);
-            if (c.getName().equals(name)) {
-                clubList.remove(i);
-                return;
-            }
-        }
+        if (name == null) return;
+        clubsList.removeIf(c -> c.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public clubs getTeamByName(String name) {
-        for (int i = 0; i < clubList.size(); i++) {
-            clubs c = clubList.get(i);
-            if (c.getName().equals(name)) {
-                return c;
-            }
-        }
-        return null;
+        if (name == null) return null;
+        Optional<clubs> club = clubsList.stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name))
+                .findFirst();
+        return club.orElse(null);
     }
 
     @Override
     public List<clubs> findAll() {
-        List<clubs> copy = new ArrayList<>();
-        for (int i = 0; i < clubList.size(); i++) {
-            copy.add(clubList.get(i));
-        }
-        return copy;
+        return new ArrayList<>(clubsList);
     }
 
     @Override
     public clubs getBestTeam() {
-        if (clubList.size() == 0) {
-            return null;
+        if (clubsList.isEmpty()) return null;
+
+        clubs bestTeam = clubsList.get(0);
+        int maxPoints = 0;
+        if (bestTeam.getStatistics() != null) {
+            maxPoints = bestTeam.getStatistics().getPoints();
         }
-        clubs best = clubList.get(0);
-        for (int i = 1; i < clubList.size(); i++) {
-            clubs c = clubList.get(i);
-            if (c.getPoints() > best.getPoints()) {
-                best = c;
+
+        for (clubs c : clubsList) {
+            if (c.getStatistics() != null && c.getStatistics().getPoints() > maxPoints) {
+                maxPoints = c.getStatistics().getPoints();
+                bestTeam = c;
             }
         }
-        return best;
+        return bestTeam;
     }
 }

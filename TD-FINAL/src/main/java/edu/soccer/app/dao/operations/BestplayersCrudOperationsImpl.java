@@ -1,55 +1,65 @@
 package edu.soccer.app.dao.operations;
 
-import edu.soccer.app.dao.entity.Bestplayers;
 import edu.soccer.app.dao.entity.players;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class BestplayersCrudOperationsImpl implements BestplayersCrudOperations {
 
-    private static List<players> players = new ArrayList<>();
+    private final List<players> playersList = new ArrayList<>();
 
     @Override
     public void addPlayer(players player) {
-        players.add(player);
+        playersList.add(player);
     }
 
     @Override
     public players getPlayerByName(String name) {
-        for (players player : players) {
-            if (player.getName().equals(name)) {
-                return player;
-            }
-        }
-        return null;
+        if (name == null) return null;
+        Optional<players> player = playersList.stream()
+                .filter(p -> p.getName().equalsIgnoreCase(name))
+                .findFirst();
+        return player.orElse(null);
     }
 
     @Override
     public void updatePlayer(players updatedPlayer) {
-        players existingPlayer = getPlayerByName(updatedPlayer.getName());
-        if (existingPlayer != null) {
-            existingPlayer.updatePosition(updatedPlayer.getPosition());
-            existingPlayer.updateNationality(updatedPlayer.getNationality());
-            existingPlayer.updateAge(updatedPlayer.getAge());
-
-            existingPlayer.getIndividualStatistics().setGoals(updatedPlayer.getIndividualStatistics().getGoals());
-            existingPlayer.getIndividualStatistics().setPlayingTime(updatedPlayer.getIndividualStatistics().getPlayingTime());
+        if (updatedPlayer == null) return;
+        for (int i = 0; i < playersList.size(); i++) {
+            if (playersList.get(i).getName().equalsIgnoreCase(updatedPlayer.getName())) {
+                playersList.set(i, updatedPlayer);
+                return;
+            }
         }
     }
 
     @Override
     public void deletePlayer(String name) {
-        players.removeIf(player -> player.getName().equals(name));
+        if (name == null) return;
+        playersList.removeIf(p -> p.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public players getBestPlayer() {
-        return Bestplayers.bestPlayer(players);
+        if (playersList.isEmpty()) return null;
+
+        players bestPlayer = playersList.get(0);
+        int maxGoals = bestPlayer.getIndividualStatistics() != null ? bestPlayer.getIndividualStatistics().getGoals() : 0;
+
+        for (players p : playersList) {
+            int goals = p.getIndividualStatistics() != null ? p.getIndividualStatistics().getGoals() : 0;
+            if (goals > maxGoals) {
+                maxGoals = goals;
+                bestPlayer = p;
+            }
+        }
+        return bestPlayer;
     }
 
     @Override
     public List<players> findAll() {
-        return new ArrayList<>(players);
+        return new ArrayList<>(playersList);
     }
 }

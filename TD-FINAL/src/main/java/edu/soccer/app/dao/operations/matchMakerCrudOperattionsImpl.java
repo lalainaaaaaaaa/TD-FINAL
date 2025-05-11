@@ -1,52 +1,69 @@
 package edu.soccer.app.dao.operations;
 
-import edu.soccer.app.dao.entity.matchMaker;
+import edu.soccer.app.dao.entity.matches;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class matchMakerCrudOperattionsImpl implements matchMakerCrudOperations {
-    private static List<edu.soccer.app.dao.entity.matches> matches = new ArrayList<>();
+
+    private final List<matches> matchesList = new ArrayList<>();
 
     @Override
-    public void addMatch(edu.soccer.app.dao.entity.matches match) {
-        matches.add(match);
+    public void addMatch(matches match) {
+        if (match != null) {
+            matchesList.add(match);
+        }
     }
 
     @Override
-    public edu.soccer.app.dao.entity.matches getMatchByTeams(String homeTeamName, String awayTeamName) {
-        for (edu.soccer.app.dao.entity.matches match : matches) {
-            if (match.getHomeTeam().getName().equalsIgnoreCase(homeTeamName)
-                    && match.getAwayTeam().getName().equalsIgnoreCase(awayTeamName)) {
-                return match;
-            }
-        }
-        return null;
+    public matches getMatchByTeams(String homeTeamName, String awayTeamName) {
+        if (homeTeamName == null || awayTeamName == null) return null;
+
+        Optional<matches> match = matchesList.stream()
+                .filter(m -> m.getHomeTeam().getName().equalsIgnoreCase(homeTeamName)
+                        && m.getAwayTeam().getName().equalsIgnoreCase(awayTeamName))
+                .findFirst();
+
+        return match.orElse(null);
     }
 
     @Override
     public void updateMatchScore(String homeTeamName, String awayTeamName, int homeScore, int awayScore) {
-        edu.soccer.app.dao.entity.matches existingMatch = getMatchByTeams(homeTeamName, awayTeamName);
-        if (existingMatch != null) {
-            existingMatch.play(homeScore, awayScore);
+        matches match = getMatchByTeams(homeTeamName, awayTeamName);
+        if (match != null) {
+            match.setHomeScore(homeScore);
+            match.setAwayScore(awayScore);
+            match.setStatus("FINISHED");
         }
     }
 
     @Override
     public void deleteMatch(String homeTeamName, String awayTeamName) {
-        matches.removeIf(match ->
-                match.getHomeTeam().getName().equalsIgnoreCase(homeTeamName)
-                        && match.getAwayTeam().getName().equalsIgnoreCase(awayTeamName)
-        );
+        matchesList.removeIf(m -> m.getHomeTeam().getName().equalsIgnoreCase(homeTeamName)
+                && m.getAwayTeam().getName().equalsIgnoreCase(awayTeamName));
     }
 
     @Override
-    public edu.soccer.app.dao.entity.matches getBestMatch() {
-        return matchMaker.bestMatch(matches);
+    public matches getBestMatch() {
+        if (matchesList.isEmpty()) return null;
+
+        matches bestMatch = matchesList.get(0);
+        int maxDifference = Math.abs(bestMatch.getHomeScore() - bestMatch.getAwayScore());
+
+        for (matches m : matchesList) {
+            int diff = Math.abs(m.getHomeScore() - m.getAwayScore());
+            if (diff > maxDifference) {
+                maxDifference = diff;
+                bestMatch = m;
+            }
+        }
+        return bestMatch;
     }
 
     @Override
-    public List<edu.soccer.app.dao.entity.matches> findAll() {
-        return new ArrayList<>(matches);
+    public List<matches> findAll() {
+        return new ArrayList<>(matchesList);
     }
 }
