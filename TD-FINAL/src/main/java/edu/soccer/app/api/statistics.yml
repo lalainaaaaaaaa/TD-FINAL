@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: Soccer Championship API
+  version: 1.0.0
+  description: Comprehensive API for managing the 2024 season including clubs, matches, players, events, statistics, and standings
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+
+  /players:
+    get:
+      summary: Retrieve list of players with optional filters
+      parameters:
+        - in: query
+          name: club
+          schema:
+            type: string
+          description: Filter by club name
+          required: false
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Filter by player name (partial match)
+          required: false
+      responses:
+        '200':
+          description: Filtered list of players
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+
+  /players/{id}/statistics/{seasonYear}:
+    get:
+      summary: Get individual statistics of a player for a given season
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Player identifier
+        - in: path
+          name: seasonYear
+          schema:
+            type: integer
+          required: true
+          description: Season year
+      responses:
+        '200':
+          description: Individual statistics of the player
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndividualStatistics'
+        '404':
+          description: Player or season not found
+
+  /championships/{championshipId}/generateMatches/{seasonYear}:
+    post:
+      summary: Generate matches for a given championship and season
+      parameters:
+        - in: path
+          name: championshipId
+          schema:
+            type: integer
+          required: true
+          description: Championship identifier
+        - in: path
+          name: seasonYear
+          schema:
+            type: integer
+          required: true
+          description: Season year
+      responses:
+        '200':
+          description: List of generated matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Match'
+        '404':
+          description: Season or championship not found
+
+components:
+  schemas:
+
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "player123"
+        name:
+          type: string
+          example: "Striker 1"
+        number:
+          type: integer
+          example: 7
+        age:
+          type: integer
+          example: 17
+        position:
+          type: string
+          example: "STRIKER"
+        nationality:
+          type: string
+          example: "Spanish"
+        playingTimeSeconds:
+          type: integer
+          example: 33000
+        club:
+          $ref: '#/components/schemas/Club'
+
+    Club:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Club 1"
+        acronym:
+          type: string
+          example: "C1"
+        yearOfCreation:
+          type: integer
+          example: 1902
+        stadium:
+          type: string
+          example: "Stadium 1"
+        coach:
+          type: string
+          example: "Coach 1"
+        nationality:
+          type: string
+          example: "French"
+
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "match001"
+        homeTeam:
+          $ref: '#/components/schemas/Club'
+        awayTeam:
+          $ref: '#/components/schemas/Club'
+        stadium:
+          type: string
+          example: "Stadium 1"
+        status:
+          type: string
+          enum: [NOT_STARTED, IN_PROGRESS, FINISHED]
+          example: "NOT_STARTED"
+        homeScore:
+          type: integer
+          example: 4
+          description: Home team score (available after match status FINISHED)
+        awayScore:
+          type: integer
+          example: 1
+          description: Away team score (available after match status FINISHED)
+        eventsHome:
+          type: string
+          example: |
+            Striker 1 at 2'
+            Striker 1 at 8'
+            Midfielder 1 at 50' 
+            Defender 1 at 60'
+        eventsAway:
+          type: string
+          example: |
+            Goalkeeper 1 at 1' (ownGoal)
+
+    IndividualStatistics:
+      type: object
+      properties:
+        goals:
+          type: integer
+          example: 4
+        assists:
+          type: integer
+          example: 2
+        minutesPlayed:
+          type: integer
+          example: 32400
+        matchesPlayed:
+          type: integer
+          example: 10
+
+    StandingEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+          example: 1
+        club:
+          $ref: '#/components/schemas/Club'
+        points:
+          type: integer
+          example: 7
+        goalsFor:
+          type: integer
+          example: 4
+        goalsAgainst:
+          type: integer
+          example: 7
+        goalDifference:
+          type: integer
+          example: -3

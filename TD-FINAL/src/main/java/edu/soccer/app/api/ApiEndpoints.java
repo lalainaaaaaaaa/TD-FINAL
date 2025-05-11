@@ -50,13 +50,10 @@ public class ApiEndpoints {
 
     @PutMapping("/players/{id}")
     public players updatePlayer(@PathVariable String id, @RequestBody players updatedPlayer) {
-        int playerId;
-        try {
-            playerId = Integer.parseInt(id);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid player id: " + id);
-        }
-        playersList.removeIf(p -> p.getId() == playerId);
+        // Retirer le joueur avec le même id (comparaison String avec equals)
+        playersList.removeIf(p -> p.getId().equals(id));
+        // S’assurer que l’id du joueur mis à jour est cohérent
+        updatedPlayer.setId(id);
         playersList.add(updatedPlayer);
         return updatedPlayer;
     }
@@ -98,7 +95,7 @@ public class ApiEndpoints {
         try {
             clubId = Integer.parseInt(id);
         } catch (NumberFormatException e) {
-            return new ArrayList<>(); // Return empty list on invalid ID
+            return new ArrayList<>(); // Retourne liste vide si id invalide
         }
         return playersList.stream()
                 .filter(player -> player.getClub() != null && player.getClub().getId() == clubId)
