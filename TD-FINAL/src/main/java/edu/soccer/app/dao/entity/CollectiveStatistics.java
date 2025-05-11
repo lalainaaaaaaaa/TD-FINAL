@@ -16,13 +16,11 @@ public class CollectiveStatistics {
     public void update(int goalsFor, int goalsAgainst) {
         this.goalsFor += goalsFor;
         this.goalsAgainst += goalsAgainst;
-
         if (goalsFor > goalsAgainst) {
             this.points += 3;
         } else if (goalsFor == goalsAgainst) {
             this.points += 1;
         }
-
         if (goalsAgainst == 0) {
             this.cleanSheets++;
         }
@@ -42,9 +40,5 @@ public class CollectiveStatistics {
 
     public int getCleanSheets() {
         return cleanSheets;
-    }
-
-    public int getGoalDifference() {
-        return goalsFor - goalsAgainst;
     }
 }

@@ -20,7 +20,6 @@ public class ChampionshipRanking {
         this.goalsAgainst = goalsAgainst;
     }
 
-
     public String getTeamName() {
         return teamName;
     }

@@ -25,7 +25,7 @@ public class championships {
         if (currentSeason == null) {
             throw new IllegalStateException("The current season is not defined.");
         }
-        matches.clear(); // Clear previous matches if necessary
+        matches.clear();
         for (int i = 0; i < teams.size(); i++) {
             for (int j = i + 1; j < teams.size(); j++) {
                 clubs homeTeam = teams.get(i);
@@ -61,5 +61,9 @@ public class championships {
     }
     public List<edu.soccer.app.dao.entity.matches> getMatches() {
         return matches;
+    }
+
+    public Integer getYear() {
+        return null;
     }
 }
