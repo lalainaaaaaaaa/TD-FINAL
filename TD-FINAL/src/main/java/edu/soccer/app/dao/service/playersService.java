@@ -1,40 +1,66 @@
 package edu.soccer.app.dao.service;
 
 import edu.soccer.app.dao.entity.players;
-import edu.soccer.app.repository.playersRepository;
+import edu.soccer.app.dao.operations.playersCrudOperations;
 
-import java.sql.SQLException;
 import java.util.List;
 
-public abstract class playersService {
-    private playersRepository playerRepository;
+public class playersService {
 
-    public playersService() {
-        this.playerRepository = playerRepository;
+    private final playersCrudOperations playersDao;
+
+    public playersService(playersCrudOperations playersDao) {
+        this.playersDao = playersDao;
     }
 
-    public static List<players> getBestplayers(int top, String playingTimeUnit) {
+    public void addPlayer(players player) {
+        playersDao.addPlayer(player);
+    }
+
+    public void updatePlayer(players player) {
+        playersDao.updatePlayer(player);
+    }
+
+    public void deletePlayerByNumber(int number) {
+        playersDao.deletePlayer(number);
+    }
+
+    public players getPlayerByNumber(int number) {
+        return playersDao.getPlayerByNumber(number);
+    }
+
+    public List<players> getAllPlayers() {
+        return playersDao.findAll();
+    }
+
+    public players getBestPlayer() {
+        List<players> allPlayers = playersDao.findAll();
+        if (allPlayers.isEmpty()) {
+            return null;
+        }
+
+        players bestPlayer = allPlayers.get(0);
+        int maxGoals = bestPlayer.getIndividualStatistics() != null ? bestPlayer.getIndividualStatistics().getGoals() : 0;
+
+        for (players p : allPlayers) {
+            int goals = p.getIndividualStatistics() != null ? p.getIndividualStatistics().getGoals() : 0;
+            if (goals > maxGoals) {
+                maxGoals = goals;
+                bestPlayer = p;
+            }
+        }
+        return bestPlayer;
+    }
+
+    public players findById(String id) {
         return null;
     }
 
     public List<players> findAll() {
-        try {
-            return playerRepository.findAll();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error retrieving players", e);
-        }
+        return null;
     }
 
-    public void save(players player) {
-        if (player.getName() == null || player.getName().isEmpty()) {
-            throw new IllegalArgumentException("Player name cannot be null or empty.");
-        }
-        try {
-            playerRepository.save(player);
-        } catch (SQLException e) {
-            throw new RuntimeException("Error saving player", e);
-        }
+    public List<players> findAllFiltered(String club, String name) {
+        return null;
     }
-
-    public abstract List<players> getBestPlayers(int top, String playingTimeUnit);
 }

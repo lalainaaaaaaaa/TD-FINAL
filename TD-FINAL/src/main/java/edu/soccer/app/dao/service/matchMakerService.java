@@ -11,13 +11,12 @@ import java.util.stream.Collectors;
 public class matchMakerService {
     private final matchMakerRepository matchMakerRepository;
 
-
     public matchMakerService(Connection connection) {
-        this.matchMakerRepository = new matchMakerRepository (connection);
+        this.matchMakerRepository = new matchMakerRepository(connection);
     }
 
     public List<matches> getAllMatches() throws SQLException {
-        return matchMakerRepository .findAll();
+        return matchMakerRepository.findAll();
     }
 
     public matches getBestMatch() throws SQLException {
@@ -25,10 +24,16 @@ public class matchMakerService {
     }
 
     public List<matches> getMatchesBySeason(String seasonYear) throws SQLException {
-        List<matches> allMatches = matchMakerRepository.findAll();
+        int year;
+        try {
+            year = Integer.parseInt(seasonYear);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid season year: " + seasonYear);
+        }
 
+        List<matches> allMatches = matchMakerRepository.findAll();
         return allMatches.stream()
-                .filter(match -> String.valueOf(match.getSeason().getYear()).equals(seasonYear))
+                .filter(match -> match.getSeason() != null && match.getSeason().getYear() == year)
                 .collect(Collectors.toList());
     }
 }

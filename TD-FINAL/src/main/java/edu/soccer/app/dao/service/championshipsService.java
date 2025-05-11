@@ -1,39 +1,53 @@
 package edu.soccer.app.dao.service;
 
-import edu.soccer.app.dao.entity.championships;
-import edu.soccer.app.dao.entity.players;
-import edu.soccer.app.repository.championshipsRepository;
+import edu.soccer.app.dao.entity.*;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class championshipsService {
-    private championshipsRepository championshipRepository;
+public class championshipsService {
 
-    public championshipsService() {
-        this.championshipRepository = championshipRepository;
+    private List<players> players;
+    private List<season> seasons;
+
+    public championshipsService(List<players> players, List<season> seasons) {
+        this.players = players;
+        this.seasons = seasons;
     }
 
-    public List<championships> findAll() {
-        try {
-            return championshipRepository.findAll();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error retrieving championships", e);
-        }
+    public List<players> getPlayers(String clubAcronym, String nameFilter) {
+        return players.stream()
+                .filter(p -> clubAcronym == null || (p.getClub() != null && clubAcronym.equalsIgnoreCase(p.getClub().getAcronym())))
+                .filter(p -> nameFilter == null || p.getName().toLowerCase().contains(nameFilter.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
-    public void save(championships championship) {
-        if (championship.getName() == null || championship.getName().isEmpty()) {
-            throw new IllegalArgumentException("Championship name cannot be null or empty.");
+    public IndividualStatistics getPlayerStatisticsBySeason(String playerId, int seasonYear) {
+        season season = seasons.stream()
+                .filter(s -> s.getYear() == seasonYear)
+                .findFirst()
+                .orElse(null);
+
+        if (season == null) throw new IllegalArgumentException("Saison non trouvée");
+
+        IndividualStatistics totalStats = new IndividualStatistics();
+
+        for (matches match : season.getMatches()) {
+            IndividualStatistics matchStats = match.getPlayerStatistics(playerId);
+            if (matchStats != null) {
+                totalStats.updateGoals(matchStats.getGoals());
+                totalStats.updatePlayingTime(matchStats.getPlayingTimeSeconds());
+            }
         }
-        try {
-            championshipRepository.save(championship);
-        } catch (SQLException e) {
-            throw new RuntimeException("Error saving championship", e);
-        }
+        return totalStats;
     }
 
-    public abstract String synchronize(String apiKey);
-
-    public abstract List<players> getBestPlayers();
+    public void generateMatchesForSeason(int year) {
+        season season = seasons.stream()
+                .filter(s -> s.getYear() == year)
+                .findFirst()
+                .orElse(null);
+        if (season == null) throw new IllegalArgumentException("Season not found");
+        season.generateMatches();
+    }
 }
