@@ -1,92 +1,66 @@
 package edu.soccer.app.Test;
 
 import edu.soccer.app.dao.entity.clubs;
-import edu.soccer.app.dao.operations.BestclubsCrudOperations;
-import org.mockito.Mockito;
+import edu.soccer.app.dao.entity.CollectiveStatistics;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class clubsTestUnitaire {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        clubs real = new clubs("Real Madrid FC");
-        real.setPoints(10);
+class clubsTestUnitaire {
 
-        clubs barca = new clubs("FC Barcelone");
-        barca.setPoints(12);
+    private List<clubs> clubsList;
 
-        clubs updatedReal = new clubs("Real Madrid FC");
-        updatedReal.setPoints(15);
+    @BeforeEach
+    void setUp() {
+        clubs club1 = new clubs(1, "Club 1", "C1", 1902, "Stade 1", "Entraîneur 1", "Français");
+        clubs club2 = new clubs(2, "Club 2", "C2", 1905, "Stade 2", "Entraîneur 2", "Italien");
+        clubs club3 = new clubs(3, "Club 3", "C3", 1910, "Stade 3", "Entraîneur 3", "Allemand");
+        clubs club4 = new clubs(4, "Club 4", "C4", 1902, "Stade 4", "Entraîneur 4", "Malgache");
+        clubs club5 = new clubs(5, "Club 5", "C5", 1905, "Stade 5", "Entraîneur 5", "Ivorien");
+        clubs club6 = new clubs(6, "Club 6", "C6", 1910, "Stade 6", "Entraîneur 6", "Espagnol");
 
+        clubsList = new ArrayList<>();
+        clubsList.add(club1);
+        clubsList.add(club2);
+        clubsList.add(club3);
+        clubsList.add(club4);
+        clubsList.add(club5);
+        clubsList.add(club6);
 
-        BestclubsCrudOperations teamService = Mockito.mock(BestclubsCrudOperations.class);
-
-
-        Mockito.when(teamService.findAll()).thenReturn(Arrays.asList(real, barca));
-        Mockito.when(teamService.getTeamByName("Real Madrid FC")).thenReturn(updatedReal);
-        Mockito.when(teamService.getBestTeam()).thenReturn(updatedReal);
-
-
-        List<clubs> teams = teamService.findAll();
-        printTeams("Teams after add", teams);
-        if (teams.size() == 2 && teams.contains(real) && teams.contains(barca)) {
-            System.out.println("Add and findAll: OK");
-        } else {
-            System.out.println("Add and findAll: FAILED");
-        }
-
-        clubs foundReal = teamService.getTeamByName("Real Madrid FC");
-        System.out.println("Updated Real:");
-        printTeam(foundReal);
-        if (foundReal != null && foundReal.getPoints() == 15) {
-            System.out.println("Update team: OK");
-        } else {
-            System.out.println("Update team: FAILED");
-        }
-
-
-        Mockito.when(teamService.findAll()).thenReturn(Arrays.asList(updatedReal));
-        teams = teamService.findAll();
-        printTeams("Teams after delete", teams);
-        boolean barcaDeleted = true;
-        for (clubs t : teams) {
-            if (t.getName().equals("FC Barcelone")) {
-                barcaDeleted = false;
-                break;
-            }
-        }
-        if (barcaDeleted) {
-            System.out.println("Delete team: OK");
-        } else {
-            System.out.println("Delete team: FAILED");
-        }
-
-        clubs best = teamService.getBestTeam();
-        System.out.println("Best team:");
-        printTeam(best);
-        if (best != null && best.getName().equals("Real Madrid FC")) {
-            System.out.println("Best team check: OK");
-        } else {
-            System.out.println("Best team check: FAILED");
-        }
+        updateStats(club1.getStatistics(), 7, 2);
+        updateStats(club2.getStatistics(), 4, 5);
+        updateStats(club3.getStatistics(), 1, 4);
+        updateStats(club4.getStatistics(), 6, 2);
+        updateStats(club5.getStatistics(), 5, 4);
+        updateStats(club6.getStatistics(), 5, 5);
     }
 
-    private static void printTeams(String title, List<clubs> teams) {
-        System.out.println("Name && Points");
-        for (clubs c : teams) {
-            System.out.println(c.getName() + "    " + c.getPoints());
-        }
-        System.out.println();
+    @Test
+    void testStatisticsUpdate() {
+        assertEquals(7, clubsList.get(0).getStatistics().getGoalsFor());
+        assertEquals(2, clubsList.get(0).getStatistics().getGoalsAgainst());
+
+        assertEquals(4, clubsList.get(1).getStatistics().getGoalsFor());
+        assertEquals(5, clubsList.get(1).getStatistics().getGoalsAgainst());
     }
 
-    private static void printTeam(clubs club) {
-        if (club == null) {
-            System.out.println("No club found.");
-            return;
-        }
-        System.out.println("Name: " + club.getName());
-        System.out.println("Points: " + club.getPoints());
-        System.out.println();
+    @Test
+    void testRankingOrder() {
+        clubsList.sort(Comparator.comparingInt((clubs c) -> c.getStatistics().getPoints()).reversed()
+                .thenComparingInt(c -> c.getStatistics().getGoalsFor() - c.getStatistics().getGoalsAgainst()).reversed());
+
+
+        assertTrue(clubsList.get(0).getStatistics().getPoints() >= clubsList.get(1).getStatistics().getPoints());
+        assertTrue(clubsList.get(0).getStatistics().getGoalsFor() - clubsList.get(0).getStatistics().getGoalsAgainst()
+                >= clubsList.get(1).getStatistics().getGoalsFor() - clubsList.get(1).getStatistics().getGoalsAgainst());
+    }
+
+    private void updateStats(CollectiveStatistics stats, int goalsFor, int goalsAgainst) {
+        stats.update(goalsFor, goalsAgainst);
     }
 }

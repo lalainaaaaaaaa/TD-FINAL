@@ -1,52 +1,59 @@
 package edu.soccer.app.Test;
 
 import edu.soccer.app.dao.entity.championships;
+import edu.soccer.app.dao.entity.clubs;
 import edu.soccer.app.dao.entity.matches;
 import edu.soccer.app.dao.entity.season;
-import edu.soccer.app.dao.entity.clubs;
 
 import java.util.List;
 
 public class championshipsTest {
+
     public static void main(String[] args) {
-        championships championship = new championships("Premier League", "England");
+        championships championship = new championships("Championnat National", "France");
 
-        clubs team1 = new clubs("Team 1");
-        clubs team2 = new clubs("Team 2");
-        clubs team3 = new clubs("Team 3");
 
-        championship.addTeam(team1);
-        championship.addTeam(team2);
-        championship.addTeam(team3);
+        clubs club1 = new clubs(1, "Club 1", "C1", 1902, "Stade 1", "Coach 1", "Français");
+        clubs club2 = new clubs(2, "Club 2", "C2", 1905, "Stade 2", "Coach 2", "Italien");
+        clubs club3 = new clubs(3, "Club 3", "C3", 1910, "Stade 3", "Coach 3", "Allemand");
+        clubs club4 = new clubs(4, "Club 4", "C4", 1920, "Stade 4", "Coach 4", "Espagnol");
+        clubs club5 = new clubs(5, "Club 5", "C5", 1925, "Stade 5", "Coach 5", "Portugais");
+        clubs club6 = new clubs(6, "Club 6", "C6", 1930, "Stade 6", "Coach 6", "Belge");
 
-        season season = new season(2024);
-        championship.setCurrentSeason(season);
+        championship.addTeam(club1);
+        championship.addTeam(club2);
+        championship.addTeam(club3);
+        championship.addTeam(club4);
+        championship.addTeam(club5);
+        championship.addTeam(club6);
+
+
+        season season2024 = new season(2024);
+        championship.setCurrentSeason(season2024);
+
 
         championship.generateMatches();
 
-        System.out.println("Matches of the championship " + championship.getName() + ":");
 
+        System.out.println("Équipes du championnat :");
+        for (clubs c : championship.getTeams()) {
+            System.out.println("- " + c.getName() + " (" + c.getAcronym() + ")");
+        }
+
+
+        System.out.println("Matchs générés pour la saison " + season2024.getYear() + " :");
         List<matches> matches = championship.getMatches();
-
-        for (edu.soccer.app.dao.entity.matches match : matches) {
-            String homeTeamName = match.getHomeTeam() != null ? match.getHomeTeam().getName() : "Unknown";
-            String awayTeamName = match.getAwayTeam() != null ? match.getAwayTeam().getName() : "Unknown";
-            int homeScore = match.getHomeScore();
-            int awayScore = match.getAwayScore();
-            int seasonYear = match.getSeason() != null ? match.getSeason().getYear() : 0;
-
-            System.out.println(homeTeamName + " vs " + awayTeamName + " | Score: " +
-                    homeScore + " - " + awayScore + " | Season: " +
-                    (seasonYear != 0 ? seasonYear : ""));
+        for (matches m : matches) {
+            System.out.println(m.getHomeTeam().getName() + " vs " +
+                    m.getAwayTeam().getName() + " Stade : " +
+                    m.getHomeTeam().getStadium());
         }
 
-        edu.soccer.app.dao.entity.season currentSeason = championship.getCurrentSeason();
-        if (currentSeason != null) {
-            String yearEnd = currentSeason.getYearEnd();
-            System.out.println("Current season: " + currentSeason.getYear() + " - " +
-                    (yearEnd != null ? yearEnd : "Not available"));
-        } else {
-            System.out.println("Current season: Not available");
-        }
+
+        championship.endSeason();
+
+
+        System.out.println("Nombre total de matchs générés : " + matches.size());
+        System.out.println("Nombre théorique pour 6 clubs : " + (6 * 5 * 2) + " matchs");
     }
 }

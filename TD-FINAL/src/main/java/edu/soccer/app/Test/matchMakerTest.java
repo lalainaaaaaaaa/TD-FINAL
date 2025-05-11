@@ -1,83 +1,44 @@
 package edu.soccer.app.Test;
 
+import edu.soccer.app.dao.entity.matchMaker;
 import edu.soccer.app.dao.entity.matches;
-import edu.soccer.app.dao.entity.season;
 import edu.soccer.app.dao.entity.clubs;
-import edu.soccer.app.dao.operations.matchMakerCrudOperations;
-import edu.soccer.app.dao.operations.matchMakerCrudOperattionsImpl;
+import edu.soccer.app.dao.entity.season;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class matchMakerTest {
+public class matchMakerTest{
+
     public static void main(String[] args) {
-        clubs realMadrid = new clubs("Real Madrid FC");
-        clubs barcelona = new clubs("FC Barcelona");
-        clubs psg = new clubs("Paris Saint Germain");
-        clubs marseille = new clubs("Olympique de Marseille");
+        clubs club1 = new clubs(1, "Club 1", "C1", 1902, "Stade 1", "Coach 1", "France");
+        clubs club2 = new clubs(2, "Club 2", "C2", 1905, "Stade 2", "Coach 2", "Italie");
+        clubs club3 = new clubs(3, "Club 3", "C3", 1910, "Stade 3", "Coach 3", "Allemagne");
 
-        season season2025 = new season(2025);
 
-        matches match1 = new matches(realMadrid, barcelona, season2025);
-        match1.play(2, 3);
+        season season2024 = new season(2024);
 
-        matches match2 = new matches(barcelona, realMadrid, season2025);
-        match2.play(4, 4);
 
-        matches match3 = new matches(psg, marseille, season2025);
-        match3.play(3, 0);
+        matches m1 = new matches(club1, club2, season2024);
+        m1.setHomeScore(3);
+        m1.setAwayScore(1);
 
-        matchMakerCrudOperations bestMatchService = new matchMakerCrudOperattionsImpl();
+        matches m2 = new matches(club2, club3, season2024);
+        m2.setHomeScore(2);
+        m2.setAwayScore(2);
 
-        bestMatchService.addMatch(match1);
-        bestMatchService.addMatch(match2);
-        bestMatchService.addMatch(match3);
+        matches m3 = new matches(club3, club1, season2024);
+        m3.setHomeScore(0);
+        m3.setAwayScore(4);
 
-        System.out.println("Searching for a match:");
-        matches retrievedMatch = bestMatchService.getMatchByTeams("Real Madrid FC", "FC Barcelona");
-        if (retrievedMatch != null) {
-            System.out.println("Match found: " + retrievedMatch.getHomeTeam().getName() + " vs " +
-                    retrievedMatch.getAwayTeam().getName() + " | Score: " +
-                    retrievedMatch.getHomeScore() + " - " + retrievedMatch.getAwayScore() +
-                    " | Season: " + retrievedMatch.getSeason().getYear());
-        } else {
-            System.out.println("No match found.");
-        }
 
-        System.out.println();
+        List<matches> matchs = Arrays.asList(m1, m2, m3);
 
-        bestMatchService.updateMatchScore("Paris Saint Germain", "Olympique de Marseille", 2, 2);
-        matches updatedMatch = bestMatchService.getMatchByTeams("Paris Saint Germain", "Olympique de Marseille");
-        System.out.println("After update:");
-        if (updatedMatch != null) {
-            System.out.println("Updated match: " + updatedMatch.getHomeTeam().getName() + " vs " +
-                    updatedMatch.getAwayTeam().getName() + " | Score: " +
-                    updatedMatch.getHomeScore() + " - " + updatedMatch.getAwayScore());
-        } else {
-            System.out.println("No match to update.");
-        }
+        matches best = matchMaker.bestMatch(matchs);
 
-        System.out.println();
-
-        bestMatchService.deleteMatch("FC Barcelona", "Real Madrid FC");
-        System.out.println("List of matches after deletion:");
-        List<matches> matches = bestMatchService.findAll();
-        for (edu.soccer.app.dao.entity.matches m : matches) {
-            System.out.println(m.getHomeTeam().getName() + " vs " + m.getAwayTeam().getName() +
-                    " | Season: " + m.getSeason().getYear() +
-                    " | Score: " + m.getHomeScore() + " - " + m.getAwayScore());
-        }
-
-        System.out.println();
-
-        edu.soccer.app.dao.entity.matches bestMatch = bestMatchService.getBestMatch();
-        System.out.println("Best match (largest goal difference):");
-        if (bestMatch != null) {
-            int diff = Math.abs(bestMatch.getHomeScore() - bestMatch.getAwayScore());
-            System.out.println(bestMatch.getHomeTeam().getName() + " vs " + bestMatch.getAwayTeam().getName() +
-                    " | Score: " + bestMatch.getHomeScore() + " - " + bestMatch.getAwayScore() +
-                    " | Difference: " + diff);
-        } else {
-            System.out.println("No match available.");
-        }
+        System.out.println("Best match : " +
+                best.getHomeTeam().getName() + " vs " +
+                best.getAwayTeam().getName() + "  Score : " +
+                best.getHomeScore() + " - " + best.getAwayScore());
     }
 }

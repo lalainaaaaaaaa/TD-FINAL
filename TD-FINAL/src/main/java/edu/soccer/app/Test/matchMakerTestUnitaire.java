@@ -1,90 +1,72 @@
 package edu.soccer.app.Test;
 
+import edu.soccer.app.dao.entity.matchMaker;
 import edu.soccer.app.dao.entity.matches;
-import edu.soccer.app.dao.entity.season;
 import edu.soccer.app.dao.entity.clubs;
-import edu.soccer.app.dao.operations.matchMakerCrudOperations;
-import org.mockito.Mockito;
+import edu.soccer.app.dao.entity.season;
 
-import java.util.Arrays;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class matchMakerTestUnitaire {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        clubs team1 = new clubs("Real Madrid FC");
-        clubs team2 = new clubs("FC Barcelona");
-        clubs team3 = new clubs("Paris Saint Germain");
-        clubs team4 = new clubs("Olympique de Marseille");
-        season season = new season(2025);
+class matchMakerTestUnitaire {
 
+    private List<matches> matchesList;
 
-        matches m1 = new matches(team1, team2, season);
-        m1.play(2, 3);
-        matches m2 = new matches(team2, team1, season);
-        m2.play(4, 4);
-        matches m3 = new matches(team3, team4, season);
-        m3.play(3, 0);
+    @BeforeEach
+    void setUp() {
+        clubs club1 = new clubs(1, "Club 1", "C1", 1902, "Stade 1", "Entraîneur 1", "Français");
+        clubs club2 = new clubs(2, "Club 2", "C2", 1905, "Stade 2", "Entraîneur 2", "Italien");
+        clubs club3 = new clubs(3, "Club 3", "C3", 1910, "Stade 3", "Entraîneur 3", "Allemand");
 
+        season season2024 = new season(2024);
 
-        matchMakerCrudOperations matchService = Mockito.mock(matchMakerCrudOperations.class);
+        matches m1 = new matches(club1, club2, season2024);
+        m1.setHomeScore(4);
+        m1.setAwayScore(1);
 
+        matches m2 = new matches(club2, club3, season2024);
+        m2.setHomeScore(0);
+        m2.setAwayScore(1);
 
-        Mockito.when(matchService.findAll()).thenReturn(Arrays.asList(m1, m2, m3));
-        Mockito.when(matchService.getMatchByTeams("Real Madrid FC", "FC Barcelona")).thenReturn(m1);
-        Mockito.when(matchService.getMatchByTeams("Paris Saint Germain", "Olympique de Marseille")).thenReturn(m3);
-        Mockito.when(matchService.getBestMatch()).thenReturn(m2);
+        matches m3 = new matches(club3, club1, season2024);
+        m3.setHomeScore(1);
+        m3.setAwayScore(5);
 
+        matches m4 = new matches(club2, club1, season2024);
+        m4.setHomeScore(1);
+        m4.setAwayScore(1);
 
-        matches updatedM3 = new matches(team3, team4, season);
-        updatedM3.play(2, 2);
-        Mockito.when(matchService.getMatchByTeams("Paris Saint Germain", "Olympique de Marseille")).thenReturn(updatedM3);
+        matchesList = new ArrayList<>();
+        matchesList.add(m1);
+        matchesList.add(m2);
+        matchesList.add(m3);
+        matchesList.add(m4);
+    }
 
+    @Test
+    void testBestMatch() {
+        matches best = matchMaker.bestMatch(matchesList);
+        assertNotNull(best, "Best match shouldn't be null");
+        assertEquals(5, best.getAwayScore());
+        assertEquals(1, best.getHomeScore());
+        assertEquals("Club 3", best.getHomeTeam().getName());
+        assertEquals("Club 1", best.getAwayTeam().getName());
+    }
 
-        Mockito.when(matchService.findAll()).thenReturn(Arrays.asList(m1, updatedM3));
+    @Test
+    void testBestMatchEmptyList() {
+        matches best = matchMaker.bestMatch(new ArrayList<>());
+        assertNull(best, "If list is empty, the best match should be null");
+    }
 
-
-
-        matches found = matchService.getMatchByTeams("Real Madrid FC", "FC Barcelona");
-        System.out.println("Found match: " + found);
-        if (found != null && found.equals(m1)) {
-            System.out.println("Match retrieval: OK");
-        } else {
-            System.out.println("Match retrieval: FAILED");
-        }
-
-        matches updated = matchService.getMatchByTeams("Paris Saint Germain", "Olympique de Marseille");
-        System.out.println("Updated match: " + updated);
-        if (updated != null && updated.getHomeScore() == 2 && updated.getAwayScore() == 2) {
-            System.out.println("Score update: OK");
-        } else {
-            System.out.println("Score update: FAILED");
-        }
-
-        List<matches> matchesList = matchService.findAll();
-        boolean deleted = true;
-        for (matches m : matchesList) {
-            if (m.getHomeTeam().getName().equals("FC Barcelona") && m.getAwayTeam().getName().equals("Real Madrid FC")) {
-                deleted = false;
-                break;
-            }
-        }
-        System.out.println("Matches after delete:");
-        for (matches m : matchesList) {
-            System.out.println(m);
-        }
-        if (deleted) {
-            System.out.println("Delete match: OK");
-        } else {
-            System.out.println("Delete match: FAILED");
-        }
-
-        matches best = matchService.getBestMatch();
-        System.out.println("Best match: " + best);
-        if (best != null && best.equals(m2)) {
-            System.out.println("Best match check: OK");
-        } else {
-            System.out.println("Best match check: FAILED");
-        }
+    @Test
+    void testBestMatchNullList() {
+        matches best = matchMaker.bestMatch(null);
+        assertNull(best, "If list is empty, the best match should be null");
     }
 }

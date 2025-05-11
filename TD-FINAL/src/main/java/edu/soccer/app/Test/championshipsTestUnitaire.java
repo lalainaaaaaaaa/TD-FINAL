@@ -4,27 +4,29 @@ import edu.soccer.app.dao.entity.championships;
 import edu.soccer.app.dao.entity.matches;
 import edu.soccer.app.dao.entity.season;
 import edu.soccer.app.dao.entity.clubs;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class championshipsTestUnitaire {
 
-    public static void main(String[] args) {
+    @Test
+    public void testChampionshipMatches() {
         championships championship = Mockito.mock(championships.class);
 
-        clubs team1 = new clubs("Team 1");
-        clubs team2 = new clubs("Team 2");
-        clubs team3 = new clubs("Team 3");
 
+        clubs team1 = new clubs(1, "Team 1", "T1", 1900, "Stadium 1", "Coach 1", "Country 1");
+        clubs team2 = new clubs(2, "Team 2", "T2", 1905, "Stadium 2", "Coach 2", "Country 2");
+        clubs team3 = new clubs(3, "Team 3", "T3", 1910, "Stadium 3", "Coach 3", "Country 3");
 
         season season = new season(2024);
 
-
         List<matches> matches = new ArrayList<>();
 
-        // Création simple de 6 matchs mockés
         matches.add(createMatch(team1, team2, season));
         matches.add(createMatch(team2, team1, season));
         matches.add(createMatch(team1, team3, season));
@@ -32,30 +34,17 @@ public class championshipsTestUnitaire {
         matches.add(createMatch(team2, team3, season));
         matches.add(createMatch(team3, team2, season));
 
-
         Mockito.when(championship.getName()).thenReturn("Premier League");
         Mockito.when(championship.getMatches()).thenReturn(matches);
         Mockito.when(championship.getCurrentSeason()).thenReturn(season);
 
 
-        if (championship.getMatches().size() == 6) {
-            System.out.println("Test passed: Correct number of matches generated (6)");
-        } else {
-            System.err.println("Test failed: Expected 6 matches but got " + championship.getMatches().size());
-        }
+        assertEquals(6, championship.getMatches().size(), "Correct number of matches generated (6)");
 
 
-        boolean allTeamsPresent = true;
-        for (matches match : championship.getMatches()) {
-            if (match.getHomeTeam() == null || match.getAwayTeam() == null) {
-                allTeamsPresent = false;
-                System.err.println("Test failed: Match with missing team detected.");
-                break;
-            }
-        }
-        if (allTeamsPresent) {
-            System.out.println("Test passed: All matches have home and away teams.");
-        }
+        boolean allTeamsPresent = championship.getMatches().stream()
+                .allMatch(m -> m.getHomeTeam() != null && m.getAwayTeam() != null);
+        assertTrue(allTeamsPresent, "All matches have home and away teams");
 
 
         System.out.println("Matches of the championship " + championship.getName() + ":");
@@ -66,12 +55,8 @@ public class championshipsTestUnitaire {
         }
 
 
-        if (championship.getCurrentSeason() != null) {
-            System.out.println("Current season: " + championship.getCurrentSeason().getYear());
-            System.out.println("Test passed: Current season is set.");
-        } else {
-            System.err.println("Test failed: Current season is null.");
-        }
+        assertNotNull(championship.getCurrentSeason(), "Current season is set");
+        System.out.println("Current season: " + championship.getCurrentSeason().getYear());
     }
 
     private static matches createMatch(clubs home, clubs away, season season) {

@@ -1,93 +1,53 @@
 package edu.soccer.app.Test;
 
 import edu.soccer.app.dao.entity.players;
+import edu.soccer.app.dao.entity.clubs;
 import edu.soccer.app.dao.entity.IndividualStatistics;
-import edu.soccer.app.dao.operations.BestplayersCrudOperations;
-import org.mockito.Mockito;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class playersTestUnitaire {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-        IndividualStatistics viniciusStats = new IndividualStatistics();
-        viniciusStats.updateGoals(15);
+class playersTestUnitaire {
 
-        IndividualStatistics mbappeStats = new IndividualStatistics();
-        mbappeStats.updateGoals(22);
+    private players player1;
+    private players player2;
 
-        IndividualStatistics lamineStats = new IndividualStatistics();
-        lamineStats.updateGoals(10);
+    @BeforeEach
+    void setUp() {
+        clubs club1 = new clubs(1, "FC Barcelona", "FCB", 1899, "Camp Nou", "Xavi", "Espagne");
+        clubs club2 = new clubs(2, "Real Madrid", "RM", 1902, "Santiago Bernabeu", "Ancelotti", "Espagne");
 
-
-        players vinicius = new players("Vinicius Jr", 1, "Forward", "Brazil", 100);
-        vinicius.setIndividualStatistics(viniciusStats);
-
-        players mbappe = new players("Kylian Mbappé", 2, "Forward", "France", 90);
-        mbappe.setIndividualStatistics(mbappeStats);
-
-        players lamine = new players("Lamine Yamal", 3, "Forward", "Spain", 80);
-        lamine.setIndividualStatistics(lamineStats);
+        player1 = new players("p01", "Lionel Messi", 10, 35, "Attaquant", "Argentin", 32000, club1);
+        player2 = new players("p02", "Karim Benzema", 9, 34, "Attaquant", "Français", 31000, club2);
 
 
-        BestplayersCrudOperations playerService = Mockito.mock(BestplayersCrudOperations.class);
+        IndividualStatistics stats1 = player1.getIndividualStatistics();
+        stats1.setGoals(30);
+        stats1.setAssists(12);
+        stats1.setYellowCards(3);
 
+        IndividualStatistics stats2 = player2.getIndividualStatistics();
+        stats2.setGoals(25);
+        stats2.setAssists(10);
+        stats2.setYellowCards(2);
+    }
 
-        Mockito.when(playerService.findAll()).thenReturn(Arrays.asList(vinicius, mbappe, lamine));
-        Mockito.when(playerService.getPlayerByName("Kylian Mbappé")).thenReturn(mbappe);
-        Mockito.when(playerService.getBestPlayer()).thenReturn(mbappe);
+    @Test
+    void testPlayerCreationAndStats() {
+        assertEquals("Lionel Messi", player1.getName());
+        assertEquals(10, player1.getNumber());
+        assertEquals("FC Barcelona", player1.getClub().getName());
+        assertEquals(30, player1.getIndividualStatistics().getGoals());
+        assertEquals(12, player1.getIndividualStatistics().getAssists());
+        assertEquals(3, player1.getIndividualStatistics().getYellowCards());
 
-
-        players viniciusUpdated = new players("Vinicius Jr", 1, "Forward", "Brazil", 100);
-        IndividualStatistics viniciusStatsUpdated = new IndividualStatistics();
-        viniciusStatsUpdated.updateGoals(25);
-        viniciusUpdated.setIndividualStatistics(viniciusStatsUpdated);
-
-        Mockito.when(playerService.getBestPlayer()).thenReturn(viniciusUpdated);
-
-
-        Mockito.when(playerService.getPlayerByName("Kylian Mbappé")).thenReturn(null);
-        Mockito.when(playerService.findAll()).thenReturn(Arrays.asList(viniciusUpdated, lamine));
-
-
-
-        List<players> playersList = playerService.findAll();
-        System.out.println("List of players:");
-        for (players player : playersList) {
-            IndividualStatistics stats = player.getIndividualStatistics();
-            if (stats != null) {
-                System.out.println(player.getName() + " - Goals: " + stats.getGoals());
-            } else {
-                System.out.println(player.getName() + " - No statistics available");
-            }
-        }
-
-
-        players best = playerService.getBestPlayer();
-        System.out.println("Best player: " + (best != null ? best.getName() : "None"));
-        if (best != null && !best.getName().isEmpty()) {
-            System.out.println("Best player check: OK");
-        } else {
-            System.out.println("Best player check: FAILED");
-        }
-
-
-        players bestAfterUpdate = playerService.getBestPlayer();
-        System.out.println("Best player after update: " + (bestAfterUpdate != null ? bestAfterUpdate.getName() : "None"));
-        if (bestAfterUpdate != null && !bestAfterUpdate.getName().isEmpty()) {
-            System.out.println("Update & best player: OK");
-        } else {
-            System.out.println("Update & best player: FAILED");
-        }
-
-        playerService.deletePlayer("Kylian Mbappé");
-
-        players found = playerService.getPlayerByName("Kylian Mbappé");
-        if (found == null) {
-            System.out.println("Delete player: OK");
-        } else {
-            System.out.println("Delete player: FAILED");
-        }
+        assertEquals("Karim Benzema", player2.getName());
+        assertEquals(9, player2.getNumber());
+        assertEquals("Real Madrid", player2.getClub().getName());
+        assertEquals(25, player2.getIndividualStatistics().getGoals());
+        assertEquals(10, player2.getIndividualStatistics().getAssists());
+        assertEquals(2, player2.getIndividualStatistics().getYellowCards());
     }
 }
