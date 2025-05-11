@@ -1,0 +1,242 @@
+openapi: 3.1.0
+info:
+  title: Central Soccer Championship API
+  version: 1.0.0
+  description: |
+    Central API for managing and synchronizing soccer championship data.
+    - Inter-API synchronization via POST /synchronization (ports 8081 to 8085, API key required)
+    - Retrieve best players with customizable playing time units
+    - Retrieve calculated championship rankings for season 2024
+
+servers:
+  - url: http://central-api:8080/api
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
+  schemas:
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        name:
+          type: string
+          example: "Forward 1"
+        team:
+          type: string
+          example: "Club 1"
+        number:
+          type: integer
+          example: 7
+        age:
+          type: integer
+          example: 17
+        position:
+          type: string
+          enum: [GOAL_KEEPER, DEFENSE, MIDFIELDER, STRIKER]
+          example: STRIKER
+        nationality:
+          type: string
+          example: Spanish
+        playingTime:
+          type: integer
+          description: Playing time in seconds
+          example: 33000
+        playingTimeUnit:
+          type: string
+          enum: [seconds, minutes, hours]
+          example: seconds
+      required:
+        - id
+        - name
+        - team
+        - number
+        - age
+        - position
+        - nationality
+        - playingTime
+        - playingTimeUnit
+
+    ChampionshipRanking:
+      type: object
+      properties:
+        rank:
+          type: integer
+          example: 1
+        club:
+          type: string
+          example: "Club 4"
+        points:
+          type: integer
+          example: 6
+        goalsFor:
+          type: integer
+          example: 7
+        goalsAgainst:
+          type: integer
+          example: 5
+        goalDifference:
+          type: integer
+          example: 2
+
+paths:
+
+  /synchronization:
+    post:
+      summary: Synchronize data from 5 other central APIs
+      description: |
+        Retrieves data from other championship APIs running on ports 8081 to 8085.
+        For each remote API, a GET request is sent to `/api/data` with the API key included in the `X-API-KEY` header.
+        The received data is merged locally to update players, clubs, matches, seasons, and championships.
+        Example URLs called:  
+        - http://championship1:8081/api/data  
+        - http://championship2:8082/api/data  
+        - http://championship3:8083/api/data  
+        - http://championship4:8084/api/data  
+        - http://championship5:8085/api/data  
+        The API key is mandatory for each remote call.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: force
+          in: query
+          description: Force full synchronization even if data is up to date
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Data synchronized successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Data synchronized successfully.
+
+  /bestPlayers:
+    get:
+      summary: Retrieve best players
+      description: |
+        Returns a list of the best players, optionally filtered by playing time unit.
+        Allowed values for `playingTimeUnit` are `seconds`, `minutes`, and `hours`.
+      parameters:
+        - name: top
+          in: query
+          description: Maximum number of players to return
+          required: false
+          schema:
+            type: integer
+            example: 5
+        - name: playingTimeUnit
+          in: query
+          description: Unit of playing time (seconds, minutes, hours)
+          required: false
+          schema:
+            type: string
+            enum: [seconds, minutes, hours]
+            example: minutes
+      responses:
+        '200':
+          description: List of best players
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+              examples:
+                example:
+                  value:
+                    - id: 7
+                      name: Forward 1
+                      team: Club 1
+                      number: 7
+                      age: 17
+                      position: STRIKER
+                      nationality: Spanish
+                      playingTime: 33000
+                      playingTimeUnit: seconds
+                    - id: 2
+                      name: Defender 4
+                      team: Club 4
+                      number: 2
+                      age: 25
+                      position: DEFENSE
+                      nationality: Brazilian
+                      playingTime: 32400
+                      playingTimeUnit: seconds
+
+  /championshipRankings:
+    get:
+      summary: Championship club rankings
+      description: |
+        Returns the club rankings calculated from completed matches.
+        - Points awarded: win = 3, draw = 1, loss = 0.
+        - Goals for and against include own goals.
+        - Clubs are sorted by points, goal difference, then goals scored.
+        (See video for detailed calculation.)
+      parameters:
+        - name: championshipId
+          in: query
+          description: Filter rankings by specific championship
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: season
+          in: query
+          description: Filter rankings by season (e.g., 2024)
+          required: false
+          schema:
+            type: integer
+            example: 2024
+        - name: sortBy
+          in: query
+          description: Sorting criterion
+          required: false
+          schema:
+            type: string
+            enum: [points, goalDifference, goalsFor]
+            default: points
+        - name: order
+          in: query
+          description: Sort order (ascending or descending)
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: List of championship rankings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChampionshipRanking'
+              examples:
+                example:
+                  value:
+                    - rank: 1
+                      club: Club 4
+                      points: 6
+                      goalsFor: 7
+                      goalsAgainst: 5
+                      goalDifference: 2
+                    - rank: 2
+                      club: Club 5
+                      points: 5
+                      goalsFor: 4
+                      goalsAgainst: 7
+                      goalDifference: -3

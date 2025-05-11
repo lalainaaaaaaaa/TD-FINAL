@@ -1,6 +1,7 @@
 package edu.soccer.app.api;
 
 import edu.soccer.app.dao.EntityCentral.*;
+import edu.soccer.app.dao.EntityCentral.ChampionshipData;
 import edu.soccer.app.dao.entity.*;
 import edu.soccer.app.dao.service.ChampionshipRankingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,15 +32,18 @@ public class ApiCentralEndpoint {
     @Value("${api.key}")
     private String apiKey;
 
-
+    /**
+     * POST /synchronization
+     * Synchronise les données depuis 5 autres API centrales.
+     */
     @PostMapping("/synchronization")
     public ResponseEntity<String> synchronizeData() {
         List<String> apiUrls = List.of(
-                "http://championship1/api/data",
-                "http://championship2/api/data",
-                "http://championship3/api/data",
-                "http://championship4/api/data",
-                "http://championship5/api/data"
+                "http://championship1:8081/api/data",
+                "http://championship2:8082/api/data",
+                "http://championship3:8083/api/data",
+                "http://championship4:8084/api/data",
+                "http://championship5:8085/api/data"
         );
 
         List<ChampionshipData> allData = new ArrayList<>();
@@ -60,32 +62,60 @@ public class ApiCentralEndpoint {
                 System.err.println("Failed to fetch data from " + url + ": " + e.getMessage());
             }
         }
+
+        playerList.clear();
+        matchList.clear();
+        seasonList.clear();
+        clubList.clear();
+        championshipList.clear();
+
+        for (ChampionshipData data : allData) {
+            if (data.getPlayers() != null) playerList.addAll(data.getPlayers());
+            if (data.getMatches() != null) matchList.addAll(data.getMatches());
+            if (data.getSeasons() != null) seasonList.addAll(data.getSeasons());
+            if (data.getClubs() != null) clubList.addAll(data.getClubs());
+            if (data.getChampionships() != null) championshipList.addAll(data.getChampionships());
+        }
+
         return ResponseEntity.ok("Data synchronized successfully.");
     }
 
+    /**
+     * GET /bestPlayers
+     * Récupère les meilleurs joueurs avec filtres sur unité de temps et top N.
+     */
     @GetMapping("/bestPlayers")
     public ResponseEntity<List<Player>> getBestPlayers(
             @RequestParam(required = false) Integer top,
             @RequestParam(required = false) String playingTimeUnit) {
+
+        List<String> validUnits = Arrays.asList("seconds", "minutes", "hours");
         List<Player> bestPlayers = new ArrayList<>(playerList);
 
-        if (playingTimeUnit != null) {
+        if (playingTimeUnit != null && validUnits.contains(playingTimeUnit.toLowerCase())) {
             bestPlayers = bestPlayers.stream()
                     .filter(player -> playingTimeUnit.equalsIgnoreCase(player.getPlayingTimeUnit()))
                     .collect(Collectors.toList());
         }
+
         if (top != null && top > 0) {
             bestPlayers = bestPlayers.stream().limit(top).collect(Collectors.toList());
         }
+
         return ResponseEntity.ok(bestPlayers);
     }
 
-
+    /**
+     * GET /championshipRankings
+     * Retourne les classements calculés via ChampionshipRankingService.
+     */
     @GetMapping("/championshipRankings")
     public ResponseEntity<List<ChampionshipRanking>> getChampionshipRankings() {
         List<ChampionshipRanking> rankings = championshipRankingService.getAllRankings();
         return ResponseEntity.ok(rankings);
     }
+
+    // --- Gestion complète des joueurs ---
 
     @GetMapping("/players")
     public ResponseEntity<List<Player>> getAllPlayers(
@@ -119,6 +149,8 @@ public class ApiCentralEndpoint {
         return ResponseEntity.notFound().build();
     }
 
+    // --- Gestion complète des clubs ---
+
     @GetMapping("/clubs")
     public ResponseEntity<List<Club>> getAllClubs(
             @RequestParam(required = false) String city,
@@ -136,6 +168,8 @@ public class ApiCentralEndpoint {
         return ResponseEntity.status(HttpStatus.CREATED).body(club);
     }
 
+    // --- Gestion complète des matchs ---
+
     @GetMapping("/matches")
     public ResponseEntity<List<Match>> getAllMatches(@RequestParam(required = false) String date) {
         List<Match> filteredMatches = matchList.stream()
@@ -151,6 +185,7 @@ public class ApiCentralEndpoint {
         return ResponseEntity.status(HttpStatus.CREATED).body(match);
     }
 
+    // --- Gestion complète des saisons ---
 
     @GetMapping("/seasons")
     public ResponseEntity<List<Season>> getAllSeasons() {
@@ -162,6 +197,8 @@ public class ApiCentralEndpoint {
         seasonList.add(season);
         return ResponseEntity.status(HttpStatus.CREATED).body(season);
     }
+
+    // --- Gestion complète des championnats ---
 
     @GetMapping("/championships")
     public ResponseEntity<List<Championship>> getAllChampionships(
