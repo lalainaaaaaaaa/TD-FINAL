@@ -13,15 +13,35 @@ public class IndividualStatistics {
         this.playingTimeSeconds = 0;
     }
 
+    public void updateGoals(int goals) {
+        this.goals += goals;
+    }
+
+    public void updateAssists(int assists) {
+        this.assists += assists;
+    }
+
+    public void updateYellowCards(int yellowCards) {
+        this.yellowCards += yellowCards;
+    }
+
+    public void updatePlayingTime(int seconds) {
+        this.playingTimeSeconds += seconds;
+    }
+
+
     public int getGoals() {
         return goals;
     }
+
     public int getAssists() {
         return assists;
     }
+
     public int getYellowCards() {
         return yellowCards;
     }
+
     public int getPlayingTimeSeconds() {
         return playingTimeSeconds;
     }
@@ -29,25 +49,12 @@ public class IndividualStatistics {
     public void setGoals(int goals) {
         this.goals = goals;
     }
+
     public void setAssists(int assists) {
         this.assists = assists;
     }
+
     public void setYellowCards(int yellowCards) {
         this.yellowCards = yellowCards;
-    }
-    public void setPlayingTimeSeconds(int playingTimeSeconds) { this.playingTimeSeconds = playingTimeSeconds; }
-
-
-    public void updateGoals(int goals) {
-        this.goals += goals;
-    }
-    public void updateAssists(int assists) {
-        this.assists += assists;
-    }
-    public void updateYellowCards(int yellowCards) {
-        this.yellowCards += yellowCards;
-    }
-    public void updatePlayingTime(int seconds) {
-        this.playingTimeSeconds += seconds;
     }
 }

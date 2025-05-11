@@ -28,21 +28,27 @@ public class matches {
     public clubs getHomeTeam() {
         return homeTeam;
     }
+
     public clubs getAwayTeam() {
         return awayTeam;
     }
+
     public season getSeason() {
         return season;
     }
+
     public String getStatus() {
         return status;
     }
+
     public int getHomeScore() {
         return homeScore;
     }
+
     public int getAwayScore() {
         return awayScore;
     }
+
     public String getStadium() {
         return stadium;
     }
@@ -50,9 +56,11 @@ public class matches {
     public void setStatus(String status) {
         this.status = status;
     }
+
     public void setHomeScore(int homeScore) {
         this.homeScore = homeScore;
     }
+
     public void setAwayScore(int awayScore) {
         this.awayScore = awayScore;
     }

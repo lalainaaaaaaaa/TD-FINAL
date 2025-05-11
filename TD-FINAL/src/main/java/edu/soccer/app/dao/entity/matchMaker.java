@@ -7,10 +7,10 @@ public class matchMaker {
         if (matches == null || matches.isEmpty()) {
             return null;
         }
-        edu.soccer.app.dao.entity.matches best = matches.get(0);
+        matches best = matches.get(0);
         int maxDifference = Math.abs(best.getHomeScore() - best.getAwayScore());
 
-        for (edu.soccer.app.dao.entity.matches match : matches) {
+        for (matches match : matches) {
             int diff = Math.abs(match.getHomeScore() - match.getAwayScore());
             if (diff > maxDifference) {
                 maxDifference = diff;
