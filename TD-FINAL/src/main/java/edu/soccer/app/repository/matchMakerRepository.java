@@ -1,6 +1,5 @@
 package edu.soccer.app.repository;
 
-import edu.soccer.app.dao.entity.matchMaker;
 import edu.soccer.app.dao.entity.matches;
 import edu.soccer.app.dao.entity.season;
 import edu.soccer.app.dao.entity.clubs;
@@ -10,61 +9,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class matchMakerRepository {
-    private Connection connection;
+
+    private final Connection connection;
 
     public matchMakerRepository(Connection connection) {
         this.connection = connection;
     }
 
     public List<matches> findAll() throws SQLException {
-        List<matches> matches = new ArrayList<>();
-        String sql = "SELECT * FROM Match";
+        List<matches> matchesList = new ArrayList<>();
+        String sql = "SELECT m.id, m.home_team_id, m.away_team_id, m.season_year, m.status, m.home_score, m.away_score, " +
+                "ht.name as home_team_name, ht.stadium as home_team_stadium, " +
+                "at.name as away_team_name, at.stadium as away_team_stadium " +
+                "FROM matches m " +
+                "JOIN clubs ht ON m.home_team_id = ht.id " +
+                "JOIN clubs at ON m.away_team_id = at.id";
 
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                clubs homeTeam = findTeamByName(rs.getString("home_team"));
-                clubs awayTeam = findTeamByName(rs.getString("away_team"));
-                season season = findSeasonById(rs.getInt("season_id"));
+                // Construire les objets clubs pour homeTeam et awayTeam
+                clubs homeTeam = new clubs(
+                        rs.getInt("home_team_id"),
+                        rs.getString("home_team_name"),
+                        null, 0, // acronym, yearOfCreation à adapter
+                        rs.getString("home_team_stadium"),
+                        null, null);
 
-                edu.soccer.app.dao.entity.matches match = new matches(homeTeam, awayTeam, season);
-                match.play(rs.getInt("home_score"), rs.getInt("away_score"));
-                matches.add(match);
+                clubs awayTeam = new clubs(
+                        rs.getInt("away_team_id"),
+                        rs.getString("away_team_name"),
+                        null, 0,
+                        rs.getString("away_team_stadium"),
+                        null, null);
+
+                // Construire l'objet season
+                season season = new season(rs.getInt("season_year"));
+
+                // Construire l'objet matches
+                matches match = new matches(homeTeam, awayTeam, season);
+                match.setStatus(rs.getString("status"));
+                match.setHomeScore(rs.getInt("home_score"));
+                match.setAwayScore(rs.getInt("away_score"));
+
+                matchesList.add(match);
             }
         }
-
-        return matches;
+        return matchesList;
     }
 
     public matches getBestMatch() throws SQLException {
-        List<matches> matches = findAll();
-        return matchMaker.bestMatch(matches);
-    }
+        // Exemple simple : match avec la plus grande différence de score
+        List<matches> allMatches = findAll();
+        if (allMatches.isEmpty()) return null;
 
-    private clubs findTeamByName(String name) throws SQLException {
-        String sql = "SELECT * FROM Team WHERE name = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new clubs(rs.getString("name")); // Ajuster selon vos propriétés
-                }
+        matches bestMatch = allMatches.get(0);
+        int maxDiff = Math.abs(bestMatch.getHomeScore() - bestMatch.getAwayScore());
+
+        for (matches m : allMatches) {
+            int diff = Math.abs(m.getHomeScore() - m.getAwayScore());
+            if (diff > maxDiff) {
+                maxDiff = diff;
+                bestMatch = m;
             }
         }
-        throw new SQLException("Team not found: " + name);
-    }
-
-    private season findSeasonById(int id) throws SQLException {
-        String sql = "SELECT * FROM Season WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new season(rs.getInt("id")); // Ajuster selon vos propriétés
-                }
-            }
-        }
-        throw new SQLException("Season not found with id: " + id);
+        return bestMatch;
     }
 }

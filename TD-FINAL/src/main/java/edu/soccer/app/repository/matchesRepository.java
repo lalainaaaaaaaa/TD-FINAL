@@ -24,7 +24,7 @@ public class matchesRepository {
             while (rs.next()) {
                 clubs homeTeam = findTeamByName(rs.getString("home_team"));
                 clubs awayTeam = findTeamByName(rs.getString("away_team"));
-                edu.soccer.app.dao.entity.matches match = new matches(homeTeam, awayTeam, null); // Remplir les détails nécessaires
+                matches match = new matches(homeTeam, awayTeam, null); // saison à gérer si besoin
                 matches.add(match);
             }
         }
@@ -32,15 +32,21 @@ public class matchesRepository {
         return matches;
     }
 
-    // Ajoutez validation et gestion des erreurs dans d'autres méthodes comme save, update, delete
-
     private clubs findTeamByName(String name) throws SQLException {
-        String sql = "SELECT * FROM Team WHERE name = ?";
+        String sql = "SELECT id, name, stadium, acronym, year_of_creation, coach, nationality FROM Team WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new clubs(rs.getString("name")); // Ajuster selon vos propriétés
+                    return new clubs(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("acronym"),
+                            rs.getInt("year_of_creation"),
+                            rs.getString("stadium"),
+                            rs.getString("coach"),
+                            rs.getString("nationality")
+                    );
                 }
             }
         }
@@ -48,6 +54,6 @@ public class matchesRepository {
     }
 
     public void save(matches match) {
-        return;
+        // Implémentation à faire selon besoin
     }
 }
